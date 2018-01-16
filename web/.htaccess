@@ -5,3 +5,9 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+<IfModule mod_env.c>  
+SetEnv RDS_DB_NAME awsdatabase
+SetEnv RDS_USERNAME  littlecloudz
+SetEnv RDS_PASSWORD  
+SetEnv RDS_HOSTNAME mydqlinstance.cjhdnjqsawox.us-east-2.rds.amazonaws.com
+</IfModule>  

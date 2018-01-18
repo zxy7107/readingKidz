@@ -8,6 +8,6 @@
 <IfModule mod_env.c>  
 SetEnv RDS_DB_NAME awsdatabase
 SetEnv RDS_USERNAME  littlecloudz
-SetEnv RDS_PASSWORD  
+SetEnv RDS_PASSWORD  880308zxy
 SetEnv RDS_HOSTNAME mydqlinstance.cjhdnjqsawox.us-east-2.rds.amazonaws.com
 </IfModule>  

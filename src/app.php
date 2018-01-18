@@ -9,10 +9,13 @@ use Symfony\Component\HttpFoundation\Request;
 
 // Setup the application
 $app = new Application();
+
+
 $app->register(new TwigServiceProvider, array(
     'twig.path' => __DIR__ . '/templates',
 ));
 
+// $app['debug'] = true;
 // Setup the database
 $app['db.table'] = DB_TABLE;
 $app['db.dsn'] = 'mysql:dbname=' . DB_NAME . ';host=' . DB_HOST;
@@ -22,7 +25,8 @@ $app['db'] = $app->share(function ($app) {
 
 // Handle the index page
 $app->match('/', function () use ($app) {
-    $query = $app['db']->prepare("SELECT message, author FROM {$app['db.table']}");
+    //$query = $app['db']->prepare("SELECT message, author FROM {$app['db.table']}");
+    $query = $app['db']->prepare("SELECT * FROM {$app['db.table']}");
     $thoughts = $query->execute() ? $query->fetchAll(PDO::FETCH_ASSOC) : array();
 
     return $app['twig']->render('index.twig', array(
@@ -33,27 +37,42 @@ $app->match('/', function () use ($app) {
 
 // Handle the add page
 $app->match('/add', function (Request $request) use ($app) {
-    $alert = null;
+    // $alert = null;
+    $alert = array('type' => 'success', 'message' => 'Thank you for sharing your thought.');
     // If the form was submitted, process the input
     if ('POST' == $request->getMethod()) {
         try {
             // Make sure the photo was uploaded without error
             $message = $request->request->get('thoughtMessage');
             $author = $request->request->get('thoughtAuthor');
-            if ($message && $author && strlen($author) < 64) {
+            $bookname = $request->request->get('bookname');
+            $publisher = $request->request->get('publisher');
+            $publication_date = $request->request->get('publication_date');
+            $price = $request->request->get('price');
+            $series = $request->request->get('series');
+            $language = $request->request->get('language');
+            $users = $request->request->get('users');
+            // if ($message && $author && strlen($author) < 64) {
                 // Save the thought record to the database
-                $sql = "INSERT INTO {$app['db.table']} (message, author) VALUES (:message, :author)";
+                $sql = "INSERT INTO {$app['db.table']} (message, author, bookname, publisher, publication_date, price, series, language, users) VALUES (:message, :author, :bookname, :publisher, :publication_date, :price, :series, :language, :users)";
                 $query = $app['db']->prepare($sql);
                 $data = array(
                     ':message' => $message,
                     ':author'  => $author,
+                    ':bookname'  => $bookname,
+                    ':publisher'  => $publisher,
+                    ':publication_date'  => $publication_date,
+                    ':price'  => $price,
+                    ':series'  => $series,
+                    ':language'  => $language,
+                    ':users'  => $users
                 );
                 if (!$query->execute($data)) {
                     throw new \RuntimeException('Saving your thought to the database failed.');
                 }
-            } else {
-                throw new \InvalidArgumentException('Sorry, The format of your thought was not valid.');
-            }
+            // } else {
+            //     throw new \InvalidArgumentException('Sorry, The format of your thought was not valid.');
+            // }
 
             // Display a success message
             $alert = array('type' => 'success', 'message' => 'Thank you for sharing your thought.');
@@ -67,6 +86,62 @@ $app->match('/add', function (Request $request) use ($app) {
         'title' => 'Share Your Thought!',
         'alert' => $alert,
     ));
+});
+
+// Handle the punch action
+$app->match('/punch', function (Request $request) use ($app) {
+    $alert = null;
+    // If the form was submitted, process the input
+    if ('POST' == $request->getMethod()) {
+        try {
+            // Make sure the photo was uploaded without error
+            $message = $request->request->get('thoughtMessage');
+            $author = $request->request->get('thoughtAuthor');
+            $bookname = $request->request->get('bookname');
+            $publisher = $request->request->get('publisher');
+            $publication_date = $request->request->get('publication_date');
+            $price = $request->request->get('price');
+            $series = $request->request->get('series');
+            $language = $request->request->get('language');
+            $users = $request->request->get('users');
+            // if ($message && $author && strlen($author) < 64) {
+                // Save the thought record to the database
+                $sql = "INSERT INTO {$app['db.table']} (message, author, bookname, publisher, publication_date, price, series, language, users) VALUES (:message, :author, :bookname, :publisher, :publication_date, :price, :series, :language, :users)";
+                $query = $app['db']->prepare($sql);
+                $data = array(
+                    ':message' => $message,
+                    ':author'  => $author,
+                    ':bookname'  => $bookname,
+                    ':publisher'  => $publisher,
+                    ':publication_date'  => $publication_date,
+                    ':price'  => $price,
+                    ':series'  => $series,
+                    ':language'  => $language,
+                    ':users'  => $users
+                );
+                if (!$query->execute($data)) {
+                    throw new \RuntimeException('Saving your thought to the database failed.');
+                }
+            // } else {
+            //     throw new \InvalidArgumentException('Sorry, The format of your thought was not valid.');
+            // }
+
+            // Display a success message
+            $alert = array('type' => 'success', 'message' => 'Thank you for sharing your thought.');
+        } catch (Exception $e) {
+            // Display an error message
+            $alert = array('type' => 'error', 'message' => $e->getMessage());
+        }
+    }
+
+    // return $app['twig']->render('add.twig', array(
+    //     'title' => 'Share Your Thought!',
+    //     'alert' => $alert,
+    // ));    
+    return array(
+        'title' => 'Share Your Thought!',
+        'alert' => 'xxx',
+    );
 });
 
 $app->run();

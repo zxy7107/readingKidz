@@ -178,3 +178,13 @@ CREATE TABLE
   `datachange_lasttime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ALTER TABLE `awsdatabase`.`t_books` CHARACTER SET = utf8 , COLLATE = utf8_bin;
+
+
+
+-------------------------------------------------------------------------------------
+
+http://www.bootstrap-year-calendar.com/
+
+-------------------------------------------------------------------------------------
+npm常用命令及版本号浅析
+https://www.cnblogs.com/blackgan/p/7828047.html

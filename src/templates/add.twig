@@ -1,6 +1,5 @@
 {% include 'header.twig' %}
 
-{%  if data %}<pre>{{ data }}</pre>{%  endif %}
 
 <form action="{{ app.request.baseUrl ~ '/add' }}" method="post" class="form-horizontal" enctype="multipart/form-data">
   <div class="control-group">
@@ -10,9 +9,52 @@
     </div>
   </div>
   <div class="control-group">
-    <label class="control-label" for="thoughtAuthor">Your Name</label>
+    <label class="control-label" for="thoughtAuthor">作者</label>
     <div class="controls">
       <input type="text" name="thoughtAuthor" id="thoughtAuthor" class="input-xxlarge" maxlength="63">
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="bookname">书名</label>
+    <div class="controls">
+      <input type="text" name="bookname" id="bookname" class="input-xxlarge" maxlength="63">
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="publisher">出版社</label>
+    <div class="controls">
+      <input type="text" name="publisher" id="publisher" class="input-xxlarge" maxlength="63">
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="publication_date">出版日期</label>
+    <div class="controls">
+      <input type="text" name="publication_date" id="publication_date" class="input-xxlarge" maxlength="63">
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="price">价格</label>
+    <div class="controls">
+      <input type="text" name="price" id="price" class="input-xxlarge" maxlength="63">
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="series">系列</label>
+    <div class="controls">
+      <input type="text" name="series" id="series" class="input-xxlarge" maxlength="63">
+    </div>
+  </div>
+
+  <div class="control-group">
+    <label class="control-label" for="language">语言</label>
+    <div class="controls">
+      <input type="text" name="language" id="language" class="input-xxlarge" maxlength="63">
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="users">使用者</label>
+    <div class="controls">
+      <input type="text" name="users" id="users" class="input-xxlarge" maxlength="63">
     </div>
   </div>
   <div class="control-group">
@@ -24,3 +66,7 @@
 </form>
 
 {% include 'footer.twig' %}
+
+    <script src="assets/js/controller/add.js"></script>
+  </body>
+</html>

@@ -188,3 +188,11 @@ http://www.bootstrap-year-calendar.com/
 -------------------------------------------------------------------------------------
 npm常用命令及版本号浅析
 https://www.cnblogs.com/blackgan/p/7828047.html
+
+-------------------------------------------------------------------------------------
+https://www.gajotres.net/creating-a-basic-restful-api-with-silex/
+
+
+-------------------------------------------------------------------------------------
+Create REST API In Silex With User Authentication
+http://www.cloudways.com/blog/create-rest-api-silex/

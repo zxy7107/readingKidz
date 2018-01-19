@@ -63,44 +63,10 @@ mysql workbench
 
 
 -------------------------------------------------------------------------------------
-DROP TABLE IF EXISTS `t_books`;
-CREATE TABLE `t_books` (
-  `barcode` int(11) NOT NULL AUTO_INCREMENT,
-  -- `barcode` varchar(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT 'barcode',
-  `skuName` varchar(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '单品名称',
-  `skuType` int(11) NOT NULL COMMENT '单品所在类别',
-  `skuStatus` int(11) NOT NULL COMMENT '单品状态',
-  -- 1canuse2cantuse3canbuy4lookfor5droped
-  `price` float NOT NULL COMMENT '单品价格',
-  -- `count` int(11) NOT NULL COMMENT '库存',
-  `channel` varchar(20) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL COMMENT '购买渠道',
-  `brand` varchar(20) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL COMMENT '品牌',
-  `size` varchar(20) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL COMMENT '尺码',
-  `purchaseDate` datetime DEFAULT NULL,
-  `photo` varchar(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '单品照片',
-  -- PRIMARY KEY (`barcode`,`count`),
-  PRIMARY KEY (`barcode`),
-  KEY `skuType` (`skuType`),
-  CONSTRAINT `t_sku_ibfk_1` FOREIGN KEY (`skuType`) REFERENCES `t_skuclass` (`skuClassId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- ----------------------------
--- Records of t_books
--- ----------------------------
-INSERT INTO `t_books` VALUES ('1', '冬款小公主加厚保暖印花中筒袜', '4', '1', '17.00', '淘宝戴维贝拉旗舰店', '戴维贝拉davebella','9cm','2017-10-25 20:58:19', './upload/2013/07/20074100.jpg');
-INSERT INTO `t_books` VALUES ('2', '冬款加厚保暖条纹印花中筒袜', '4', '1', '17.00', '淘宝戴维贝拉旗舰店', '戴维贝拉davebella','9cm','2017-10-25 20:58:19', './upload/2013/07/20074100.jpg');
-INSERT INTO `t_books` VALUES ('3', '婴儿马甲粉小熊', '1', '1', '59.00', '老豆商城七天无理由退换货', '无','86cm(12-18月)','2017-10-21 18:51:08', './upload/2013/07/20074100.jpg');
 
 
 -------------------------------------------------------------------------------------
-
-
-
--- ----------------------------
--- Records of t_books
--- ----------------------------
-INSERT INTO `t_books` VALUES ('1', '书名', '出版社', '2017-1-1', '第1版', '2018-2-31', '56.33','系列书籍','作者', '语言', 'zxy', '2017-10-25 20:58:19', '2017-10-25 20:58:19');
-
 
 `activity_cycle` tinyint(4) DEFAULT NULL COMMENT '活动周期'
 `count_down` tinyint(4) DEFAULT NULL COMMENT '倒计时'
@@ -131,24 +97,8 @@ datachange_createtime	datetime	DEFAULT CURRENT_TIMESTAMP(3)	Y CURRENT_TIMESTAMP(
 datachange_lasttime	datetime	DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)	Y CURRENT_TIMESTAMP(3)	
 
 
-<!-- CREATE TABLE `awsdatabase`.`t_books` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'book id',
-  `bookname` VARCHAR(45) NOT NULL DEFAULT '' COMMENT '书名',
-  `publisher` VARCHAR(45) NOT NULL DEFAULT '',
-  `publication_date` DATE NOT NULL DEFAULT '',
-  `edition` VARCHAR(45) NOT NULL DEFAULT '',
-  `purchase_date` DATE NOT NULL DEFAULT '',
-  `price` FLOAT NOT NULL DEFAULT 0,
-  `datachange_createtime` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-  `datachange_lasttime` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
-  `series` CHAR(4) NOT NULL DEFAULT '',
-  `author` VARCHAR(50) NOT NULL DEFAULT '',
-  `language` VARCHAR(45) NOT NULL DEFAULT '',
-  `users` VARCHAR(45) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`));
- -->
 
-------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------
 In your CREATE TABLE you can declare a column like this:
 
   `mydtcol` DATETIME DEFAULT CURRENT_TIMESTAMP 
@@ -180,6 +130,72 @@ CREATE TABLE
 ALTER TABLE `awsdatabase`.`t_books` CHARACTER SET = utf8 , COLLATE = utf8_bin;
 
 
+INSERT INTO `t_books` VALUES ('1', '书名', '出版社', '2017-1-1', '第1版', '2018-2-31', '56.33','系列书籍','作者', '语言', 'zxy', '2017-10-25 20:58:19', '2017-10-25 20:58:19');
+
+INSERT INTO `t_books` (`bookname`, `publisher`, `publication_date`, `edition`, `purchase_date`, `price`, `series`, `author`, `language`, `users`) VALUES
+(`bookname`, `publisher`, `publication_date`, `edition`, `purchase_date`, `price`, `series`, `author`, `language`, `users`),
+(`bookname`, `publisher`, `publication_date`, `edition`, `purchase_date`, `price`, `series`, `author`, `language`, `users`),
+(`bookname`, `publisher`, `publication_date`, `edition`, `purchase_date`, `price`, `series`, `author`, `language`, `users`),
+(`bookname`, `publisher`, `publication_date`, `edition`, `purchase_date`, `price`, `series`, `author`, `language`, `users`),
+(`bookname`, `publisher`, `publication_date`, `edition`, `purchase_date`, `price`, `series`, `author`, `language`, `users`),
+;
+
+====
+
+
+DROP TABLE IF EXISTS `t_punch_records`;
+CREATE TABLE `t_punch_records` (
+ `punch_id` int(10) NOT NULL AUTO_INCREMENT,
+ `book_id` varchar(255) NOT NULL,
+ `punch_createtime` TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP,   
+ `datachange_createtime` TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP,   
+ `datachange_lasttime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+PRIMARY KEY (`punch_id`)) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+ 
+ 
+INSERT INTO `t_punch_records` ( `book_id`) VALUES
+(1),
+(2),
+(4),
+(5),
+(8);
+
+SQL连接查询语句（内、外、交叉和合并查询） http://blog.csdn.net/u010011371/article/details/50596535
+内连接 （INNER JOIN）
+select * from t_punch_records inner join t_books     
+on t_punch_records.book_id=t_books.id;  
+
+Select  punch_createtime,t_books.bookname as bookname     
+from t_punch_records  left join t_books on t_punch_records.book_id=t_books.id; 
+
+
+CREATE TABLE `users` (
+ `id` int(10) NOT NULL,
+ `username` varchar(32) NOT NULL,
+ `password` varchar(64) NOT NULL,
+ `email` varchar(50) NOT NULL,
+ `profile_icon` varchar(255) NOT NULL,
+ `apikey` varchar(255) NOT NULL,
+ `datachange_createtime` TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP,   
+ `datachange_lasttime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+ 
+ 
+INSERT INTO `users` (`id`, `username`, `password`, `email`, `profile_icon`, `apikey`) VALUES
+(1, 'peter', '000c285457fc971f862a79b786476c78812c8897063c6fa9c045f579a3b2d63f', 'peter@example.com', 'peter.jpg', 'd0763edaa9d9bd2a9516280e9044d885'),
+(2, 'marcia', '4d6b96d1e8f9bfcd28169bafe2e17da6e1a95f71e8ca6196d3affb4f95ca809f', 'marcia@example.com', 'marcia.jpg', 'd0763edaa9d9bd2a9516280e9044d885'),
+(3, 'cindy', '81ba24935dd9a720826155382938610f1b74ba226e85a7b4ca2ad58cf06664fa', 'cindy@example.com', 'cindy.jpg', 'd0763edaa9d9bd2a9516280e9044d885'),
+(4, 'mike', 'ef1b839067281c41a6abdf36ff2346700f9cd5f17d8d4e486be9e81c67779258', 'mike@example.com', 'mike.jpg', 'd0763edaa9d9bd2a9516280e9044d885');
+ 
+
+
+ALTER TABLE `users`
+ ADD PRIMARY KEY (`id`);
+ 
+
+ALTER TABLE `users`
+ MODIFY `id` int(10) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=5;
+
 
 -------------------------------------------------------------------------------------
 
@@ -196,3 +212,8 @@ https://www.gajotres.net/creating-a-basic-restful-api-with-silex/
 -------------------------------------------------------------------------------------
 Create REST API In Silex With User Authentication
 http://www.cloudways.com/blog/create-rest-api-silex/
+
+-------------------------------------------------------------------------------------
+
+使用Bootstrap typeahead插件实现搜索框自动补全的方法
+http://www.jb51.net/article/88098.htm

@@ -1,72 +1,76 @@
 {% include 'header.twig' %}
-
-
-<form action="{{ app.request.baseUrl ~ '/add' }}" method="post" class="form-horizontal" enctype="multipart/form-data">
-  <div class="control-group">
-    <label class="control-label" for="thoughtMessage">Your Thought</label>
-    <div class="controls">
-        <textarea rows="3" name="thoughtMessage" id="thoughtMessage" class="input-xxlarge"></textarea>
+<form id="searchform" class="navbar-form navbar-right" role="search" target="_blank" method="post" action="{{ app.request.baseUrl ~ '/punch' }}">
+    <div class="form-group">
+        <input type="text" id="searchWords" name="searchWords" class="form-control" data-provide="typeahead" autocomplete="off" placeholder="请输入要搜索关键词">
     </div>
-  </div>
-  <div class="control-group">
-    <label class="control-label" for="thoughtAuthor">作者</label>
-    <div class="controls">
-      <input type="text" name="thoughtAuthor" id="thoughtAuthor" class="input-xxlarge" maxlength="63">
-    </div>
-  </div>
-  <div class="control-group">
-    <label class="control-label" for="bookname">书名</label>
-    <div class="controls">
-      <input type="text" name="bookname" id="bookname" class="input-xxlarge" maxlength="63">
-    </div>
-  </div>
-  <div class="control-group">
-    <label class="control-label" for="publisher">出版社</label>
-    <div class="controls">
-      <input type="text" name="publisher" id="publisher" class="input-xxlarge" maxlength="63">
-    </div>
-  </div>
-  <div class="control-group">
-    <label class="control-label" for="publication_date">出版日期</label>
-    <div class="controls">
-      <input type="text" name="publication_date" id="publication_date" class="input-xxlarge" maxlength="63">
-    </div>
-  </div>
-  <div class="control-group">
-    <label class="control-label" for="price">价格</label>
-    <div class="controls">
-      <input type="text" name="price" id="price" class="input-xxlarge" maxlength="63">
-    </div>
-  </div>
-  <div class="control-group">
-    <label class="control-label" for="series">系列</label>
-    <div class="controls">
-      <input type="text" name="series" id="series" class="input-xxlarge" maxlength="63">
-    </div>
-  </div>
-
-  <div class="control-group">
-    <label class="control-label" for="language">语言</label>
-    <div class="controls">
-      <input type="text" name="language" id="language" class="input-xxlarge" maxlength="63">
-    </div>
-  </div>
-  <div class="control-group">
-    <label class="control-label" for="users">使用者</label>
-    <div class="controls">
-      <input type="text" name="users" id="users" class="input-xxlarge" maxlength="63">
-    </div>
-  </div>
-  <div class="control-group">
-    <div class="controls">
-      <button type="submit" class="btn btn-primary"><b class="icon-ok icon-white"></b> Submit Your Thought</button>
-      <a href="{{ app.request.baseUrl ~ '/' }}" class="btn"><b class="icon-chevron-left"></b> Go Back</a>
-    </div>
-  </div>
+    <button type="submit" class="btn" id="searchbtn">
+        打卡
+    </button>
 </form>
-
+<form action="{{ app.request.baseUrl ~ '/add' }}" method="post" class="form-horizontal" enctype="multipart/form-data">
+    <div class="control-group">
+        <label class="control-label" for="thoughtMessage">Your Thought</label>
+        <div class="controls">
+            <textarea rows="3" name="thoughtMessage" id="thoughtMessage" class="input-xxlarge"></textarea>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="thoughtAuthor">作者</label>
+        <div class="controls">
+            <input type="text" name="thoughtAuthor" id="thoughtAuthor" class="input-xxlarge" maxlength="63">
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="bookname">书名</label>
+        <div class="controls">
+            <input type="text" name="bookname" id="bookname" class="input-xxlarge" maxlength="63">
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="publisher">出版社</label>
+        <div class="controls">
+            <input type="text" name="publisher" id="publisher" class="input-xxlarge" maxlength="63">
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="publication_date">出版日期</label>
+        <div class="controls">
+            <input type="text" name="publication_date" id="publication_date" class="input-xxlarge" maxlength="63">
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="price">价格</label>
+        <div class="controls">
+            <input type="text" name="price" id="price" class="input-xxlarge" maxlength="63">
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="series">系列</label>
+        <div class="controls">
+            <input type="text" name="series" id="series" class="input-xxlarge" maxlength="63">
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="language">语言</label>
+        <div class="controls">
+            <input type="text" name="language" id="language" class="input-xxlarge" maxlength="63">
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="users">使用者</label>
+        <div class="controls">
+            <input type="text" name="users" id="users" class="input-xxlarge" maxlength="63">
+        </div>
+    </div>
+    <div class="control-group">
+        <div class="controls">
+            <button type="submit" class="btn btn-primary"><b class="icon-ok icon-white"></b> Submit Your Thought</button>
+            <a href="{{ app.request.baseUrl ~ '/' }}" class="btn"><b class="icon-chevron-left"></b> Go Back</a>
+        </div>
+    </div>
+</form>
 {% include 'footer.twig' %}
+<script src="assets/js/controller/add.js"></script>
+</body>
 
-    <script src="assets/js/controller/add.js"></script>
-  </body>
 </html>

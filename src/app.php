@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 // Setup the application
 $app = new Application();
-$app['debug'] = true;
+// $app['debug'] = true;
 
 $app->register(new TwigServiceProvider, array(
     'twig.path' => __DIR__ . '/templates',
@@ -48,6 +48,16 @@ function object2array($object) {
 
 // Handle the index page
 $app->match('/', function () use ($app) {
+    //$query = $app['db']->prepare("SELECT message, author FROM {$app['db.table']}");
+    $query = $app['db']->prepare("SELECT * FROM {$app['db.table']}");
+    $thoughts = $query->execute() ? $query->fetchAll(PDO::FETCH_ASSOC) : array();
+
+    return $app['twig']->render('index.twig', array(
+        'title'    => 'Your Thoughts',
+        'thoughts' => $thoughts,
+    ));
+});
+$app->match('/index_original', function () use ($app) {
     //$query = $app['db']->prepare("SELECT message, author FROM {$app['db.table']}");
     $query = $app['db']->prepare("SELECT * FROM {$app['db.table']}");
     $thoughts = $query->execute() ? $query->fetchAll(PDO::FETCH_ASSOC) : array();
@@ -110,6 +120,16 @@ $app->match('/add', function (Request $request) use ($app) {
         'alert' => $alert,
     ));
 });
+
+// Handle the add page
+$app->match('/punchview', function (Request $request) use ($app) {
+    
+
+    return $app['twig']->render('punch.twig', array(
+        'title' => 'Share Your Thought!'
+    ));
+});
+
 
 $app->match('/punch', function (Request $request) use ($app) {
     // If the form was submitted, process the input
@@ -215,7 +235,8 @@ $app->post('/getBookList', function (Request $request) use ($app) {
     }
     // var_export($payload);
     // sort($payload);  
-    $res = json_encode($payload, JSON_UNESCAPED_SLASHES);  
+    // $res = json_encode($payload, JSON_UNESCAPED_SLASHES);  
+    $res = json_encode($payload, true);  
     return $res;
 });
 

@@ -50,9 +50,20 @@
         </div>
     </div>
 </div>
-
+<p><a href="{{ app.request.baseUrl ~ '/add' }}" class="btn"><b class="icon-pencil"></b> Share Your Thought</a></p>
+<div class="hero-unit">
+    <div class="row-fluid">
+        {% for thought in thoughts %}
+        <blockquote>
+            <p>{{ thought.message }} {{ thought.bookname }} {{ thought.publisher }} {{ thought.publication_date }} {{ thought.price }} {{ thought.series }} {{ thought.language }} {{ thought.users }}</p>
+            <small>{{ thought.author }}</small>
+        </blockquote>
+        <a href="{{ app.request.baseUrl ~ '/punch' }}" class="btn"><b class="icon-pencil"></b> Share Your Thought</a>
+        <hr> {% endfor %}
+    </div>
+</div>
 {% include 'footer.twig' %}
-<script src="assets/js/controller/index.js"></script>
+<script src="assets/js/controller/index_original.js"></script>
 </body>
 
 </html>

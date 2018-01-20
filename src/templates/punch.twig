@@ -1,0 +1,18 @@
+{% include 'header.twig' %}
+<div id="app">
+   <form id="searchform" class="navbar-form navbar-right" role="search" target="_blank" method="post" action="{{ app.request.baseUrl ~ '/punch' }}">
+    <div class="form-group">
+        <input type="text" id="searchWords" name="searchWords" class="form-control" data-provide="typeahead" autocomplete="off" placeholder="请输入要搜索关键词" v-model="keyword">
+    </div>
+    <button type="button" class="btn" id="searchbtn" @click="postPunch">
+        打卡
+    </button>
+</form>
+
+</div>
+
+{% include 'footer.twig' %}
+<script src="assets/js/controller/punchview.js"></script>
+</body>
+
+</html>

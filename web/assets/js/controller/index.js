@@ -63,7 +63,7 @@ $(function() {
 
     var datasource = [];
     $.ajax({
-        url: "http://127.0.0.1:8099/getPunchList",
+        url: "http://readingkid.us-east-2.elasticbeanstalk.com/getPunchList",
         method: 'post',
         dataType: 'json',
         context: 'application/json;charset=utf-8',

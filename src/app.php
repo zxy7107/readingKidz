@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 // Setup the application
 $app = new Application();
-// $app['debug'] = true;
+$app['debug'] = true;
 
 $app->register(new TwigServiceProvider, array(
     'twig.path' => __DIR__ . '/templates',
@@ -55,6 +55,8 @@ $app->match('/', function () use ($app) {
     return $app['twig']->render('index.twig', array(
         'title'    => 'Your Thoughts',
         'thoughts' => $thoughts,
+        'alert' => '',
+        'tab' => 'index'
     ));
 });
 $app->match('/index_original', function () use ($app) {
@@ -126,7 +128,9 @@ $app->match('/punchview', function (Request $request) use ($app) {
     
 
     return $app['twig']->render('punch.twig', array(
-        'title' => 'Share Your Thought!'
+        'title' => 'Share Your Thought!',
+        'alert' => '',
+        'tab' => 'punch'
     ));
 });
 

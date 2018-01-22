@@ -13,8 +13,19 @@ Follow the steps below to deploy the demo application to an Elastic Beanstalk PH
 6. Choose 'Create an RDS DB Instance with this environment' in the 'Additional Resources' step
 7. Allocate 5GB of storage and provide a username and password for your database
 8. Review and launch the application
+-------------------------------------------------------------------------------------
+readingKidz 
+http://readingkid.us-east-2.elasticbeanstalk.com/
+
+v1.0.0  
+1. 阅读打卡操作
+2. 按年历展示阅读打卡记录
 
 
+
+
+
+-------------------------------------------------------------------------------------
 
 http://127.0.0.1:8099/mixmatch/pages/index.html
 http://10.32.80.152:8099/mixmatch/pages/index.html

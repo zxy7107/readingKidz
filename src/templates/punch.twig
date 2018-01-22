@@ -1,6 +1,6 @@
 {% include 'header.twig' %}
 <div id="app">
-   <form id="searchform" class="navbar-form navbar-right" role="search" target="_blank" method="post" action="{{ app.request.baseUrl ~ '/punch' }}">
+   <form id="searchform" class="navbar-form" role="search" target="_blank" method="post" action="{{ app.request.baseUrl ~ '/punch' }}">
     <div class="form-group">
         <input type="text" id="searchWords" name="searchWords" class="form-control" data-provide="typeahead" autocomplete="off" placeholder="请输入要搜索关键词" v-model="keyword">
     </div>

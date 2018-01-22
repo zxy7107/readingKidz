@@ -7,7 +7,8 @@ $(function() {
 		// 	process(data);
 		// });
 		$.ajax({
-        url: "http://127.0.0.1:8099/getBookList",
+        // url: "http://127.0.0.1:8099/getBookList",
+        url: "http://readingkid.us-east-2.elasticbeanstalk.com/getBookList",
         method: 'post',
         dataType: 'json',
         context: 'application/json;charset=utf-8',

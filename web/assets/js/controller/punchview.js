@@ -19,7 +19,7 @@ $(function() {
 					
 	  			if(self.booklist.length == 0) {
 	  				$.ajax({
-			        url: "http://127.0.0.1:8099/getBookList",
+			        url: "http://readingkid.us-east-2.elasticbeanstalk.com/getBookList",
 			        method: 'post',
 			        dataType: 'json',
 			        context: 'application/json;charset=utf-8',
@@ -57,7 +57,7 @@ $(function() {
 	  		var self = this;
 	  		alert(self.keyword);
 	  		$.ajax({
-	        url: "http://127.0.0.1:8099/punch",
+	        url: "http://readingkid.us-east-2.elasticbeanstalk.com/punch",
 	        method: 'post',
 	        dataType: 'json',
 	        data: {

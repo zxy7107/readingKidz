@@ -17,6 +17,10 @@ Follow the steps below to deploy the demo application to an Elastic Beanstalk PH
 readingKidz 
 http://readingkid.us-east-2.elasticbeanstalk.com/
 
+
+v1.0.1
+1.更新api地址http://readingkid.us-east-2.elasticbeanstalk.com/ 
+
 v1.0.0  
 1. 阅读打卡操作
 2. 按年历展示阅读打卡记录

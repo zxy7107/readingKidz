@@ -1,6 +1,5 @@
-
-$(function() {
-	
+require(['vue', '$', 'bootstrap', 'popover', 'bootstrap-year-calendar', 'bootstrap-datepicker', 'underscore', 'bootstrap3-typeahead'], 
+    function(Vue){
 
 	var app = new Vue({
 	  el: '#app',
@@ -78,4 +77,4 @@ $(function() {
 			},
   	}
 	})		
-});
+})

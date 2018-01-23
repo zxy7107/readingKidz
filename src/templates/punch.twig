@@ -1,16 +1,18 @@
 {% include 'header.twig' %}
 <div id="app">
-   <form id="searchform" class="navbar-form" role="search" target="_blank" method="post" action="{{ app.request.baseUrl ~ '/punch' }}">
-    <div class="form-group">
-        <input type="text" id="searchWords" name="searchWords" class="form-control" data-provide="typeahead" autocomplete="off" placeholder="请输入要搜索关键词" v-model="keyword">
-    </div>
-    <button type="button" class="btn" id="searchbtn" @click="postPunch">
-        打卡
-    </button>
-</form>
-
+	<div class="row">
+	  <div class="col-lg-12">
+	    <div class="input-group">
+	      <input type="text" id="searchWords" name="searchWords" class="form-control" data-provide="typeahead" autocomplete="off" placeholder="请输入要搜索关键词" v-model="keyword">
+	      <span class="input-group-btn">
+	      <button id="refresh1" type="button" class="btn btn-default" @click="postPunch">打卡</button>
+	      </span>
+	    </div><!-- /input-group -->
+	  </div><!-- /.col-lg-6 -->
+	</div><!-- /.row -->
+	<loading v-if="changer"></loading>
+	<alert v-if="a.message" :type="a.type" :close="a.close" @close="closeAlert">${a.message}<span slot="foo">&times;</span></alert>
 </div>
-
 {% include 'footer.twig' %}
 <script src="assets/js/controller/punchview.js"></script>
 </body>

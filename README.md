@@ -232,3 +232,45 @@ http://www.cloudways.com/blog/create-rest-api-silex/
 
 使用Bootstrap typeahead插件实现搜索框自动补全的方法
 http://www.jb51.net/article/88098.htm
+
+-------------------------------------------------------------------------------------
+AWS RDS 解决时区，utf8问题
+http://blog.csdn.net/freewebsys/article/details/52293874
+
+show variables like '%time_zone%';
+select now();
+
+character_set_client utf8
+character_set_connection utf8
+character_set_database utf8
+character_set_filesystem engine-default
+character_set_results utf8
+character_set_server utf8
+
+-------------------------------------------------------------------------------------
+bootstrap loading动画
+https://www.bootply.com/tagged/animate
+
+
+-------------------------------------------------------------------------------------
+    // "bootstrap-year-calendar": "^1.1.1"
+
+引入vux 需要升级node--放弃
+https://vux.li/#/#
+
+1. npm install --registry=https://registry.npm.taobao.org
+
+2. npm install vux --save
+
+Quick Start
+3. npm install -g vue-cli
+
+4. # init a webpack project with vuxjs/template
+vue init vuxjs/webpack ./
+cd ./
+npm install
+npm run dev
+
+-------------------------------------------------------------------------------------
+bootstrap插件学习-bootstrap.alert.js
+https://www.bbsmax.com/A/QW5YZMD3dm/

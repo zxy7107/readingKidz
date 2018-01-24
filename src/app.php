@@ -53,7 +53,7 @@ $app->match('/', function () use ($app) {
     $thoughts = $query->execute() ? $query->fetchAll(PDO::FETCH_ASSOC) : array();
 
     return $app['twig']->render('index.twig', array(
-        'title'    => 'Your Thoughts',
+        'title'    => 'Wow! Good Job!',
         'thoughts' => $thoughts,
         'alert' => '',
         'tab' => 'index'
@@ -128,7 +128,7 @@ $app->match('/punchview', function (Request $request) use ($app) {
     
 
     return $app['twig']->render('punch.twig', array(
-        'title' => 'Share Your Thought!',
+        'title' => 'Punch Every Day!',
         'alert' => '',
         'tab' => 'punch'
     ));
@@ -141,16 +141,20 @@ $app->match('/punch', function (Request $request) use ($app) {
         try {
             // Make sure the photo was uploaded without error
             $bookname = $request->request->get('searchWords');
-            
+            $count = $request->request->get('count');
+            if(!isset($count)){
+              $count = 1;
+            }
             $query1 = $app['db']->prepare("SELECT id FROM {$app['db.table']} WHERE bookname='{$bookname}'");
             $book = $query1->execute() ? $query1->fetchAll(PDO::FETCH_ASSOC) : array();
             if ($bookname) {
                 // Save the thought record to the database
 
-                $sql = "INSERT INTO {$app['db.table_punch']} (book_id) VALUES (:book_id)";
+                $sql = "INSERT INTO {$app['db.table_punch']} (book_id, count) VALUES (:book_id, :count)";
                 $query = $app['db']->prepare($sql);
                 $data = array(
-                    ':book_id' => $book[0]['id']
+                    ':book_id' => $book[0]['id'],
+                    ':count' => $count
                 );
                 
                 if (!$query->execute($data)) {
@@ -167,7 +171,8 @@ $app->match('/punch', function (Request $request) use ($app) {
                 $res = array(
                  'result'=> array(
                     'book_id' => $book[0]['id'],
-                    'book_name' => $bookname
+                    'book_name' => $bookname,
+                    'count' => $count
                  ),
                  'code'=> '001',
                  'resultMassage' => '打卡成功啦',
@@ -244,10 +249,71 @@ $app->post('/getBookList', function (Request $request) use ($app) {
     return $res;
 });
 
+//二维数组排序
+function multi_array_sort($arr,$key,$type=SORT_REGULAR,$short=SORT_DESC){
+  foreach ($arr as $k => $v){
+    $name[$k] = $v[$key];
+  }
+  array_multisort($name,$type,$short,$arr);
+  return $arr;
+}
+//二维数组去重
+function more_array_unique($arr=array()){  
+    foreach($arr[0] as $k => $v){  
+        $arr_inner_key[]= $k;   //先把二维数组中的内层数组的键值记录在在一维数组中  
+
+    }
+
+    foreach ($arr as $k => $v){  
+        $v = $v['bookname'];
+        // $v =join(",",$v);    //降维 用implode()也行  
+        // print_r($v);
+        $temp[$k] =$v;      //保留原来的键值 $temp[]即为不保留原来键值  
+    }  
+    // printf("After split the array:<br>");  
+    // print_r($temp);    //输出拆分后的数组  
+    // echo"<br/>";  
+    $temp =array_unique($temp);    //去重：去掉重复的字符串  
+    // foreach ($temp as $k => $v){  
+    //     $a = explode(",",$v);   //拆分后的重组 如：Array( [0] => james [1] => 30 )  
+    //     $arr_after[$k]= array_combine($arr_inner_key,$a);  //将原来的键与值重新合并  
+    // }  
+    // ksort($arr_after);//排序如需要：ksort对数组进行排序(保留原键值key) ,sort为不保留key值  
+    $result = array();
+    foreach($temp as $value){
+      array_push($result, $value);
+    }
+    // return $arr_after;  
+    return $result;  
+} 
+
+$app->post('/getRecentlyBooks', function (Request $request) use ($app) {
+    $query = $app['db']->prepare("SELECT punch_createtime, {$app['db.table']}.bookname as bookname FROM {$app['db.table_punch']} LEFT JOIN {$app['db.table']} ON {$app['db.table_punch']}.book_id={$app['db.table']}.id");
+    $punchlist2db = $query->execute() ? $query->fetchAll(PDO::FETCH_ASSOC) : array();
+
+    $punchlist = array();
+
+    foreach ($punchlist2db as $key => $punch_ori){
+            $punch = array2object($punch_ori);
+            $punchlist[$key] =  array
+           (
+                   'punchDatetime' => $punch->punch_createtime,
+                   'bookname' => $punch->bookname
+           );
+
+    }
+    $arr_new1 = multi_array_sort($punchlist,'punchDatetime');
+    // var_export($arr_new1);
+    $arr_new = more_array_unique($arr_new1);
+    // sort($arr_new);  
+    $res = json_encode($arr_new, JSON_UNESCAPED_SLASHES);  
+    return $res;
+});
+
 $app->post('/getPunchList', function (Request $request) use ($app) {
 
 
-    $query = $app['db']->prepare("SELECT punch_createtime, {$app['db.table']}.bookname as bookname FROM {$app['db.table_punch']} LEFT JOIN {$app['db.table']} ON {$app['db.table_punch']}.book_id={$app['db.table']}.id");
+    $query = $app['db']->prepare("SELECT punch_createtime, count, {$app['db.table']}.bookname as bookname FROM {$app['db.table_punch']} LEFT JOIN {$app['db.table']} ON {$app['db.table_punch']}.book_id={$app['db.table']}.id");
     $thoughts = $query->execute() ? $query->fetchAll(PDO::FETCH_ASSOC) : array();
 
     $punchlist = array();
@@ -257,7 +323,8 @@ $app->post('/getPunchList', function (Request $request) use ($app) {
             $punchlist[$key] =  array
            (
                    'punchDatetime' => $punch->punch_createtime,
-                   'bookname' => $punch->bookname
+                   'bookname' => $punch->bookname,
+                   'count' => $punch->count
            );
 
     }

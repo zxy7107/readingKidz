@@ -17,6 +17,13 @@ Follow the steps below to deploy the demo application to an Elastic Beanstalk PH
 readingKidz 
 http://readingkid.us-east-2.elasticbeanstalk.com/
 
+v1.0.3
+1. 新增 “最近打卡的书”
+2. 新增 按阅读次数打卡
+3. 新增 按日打卡量展示年历统计，并优化配色
+
+v1.0.2
+1.增加loading&alert
 
 v1.0.1
 1.更新api地址http://readingkid.us-east-2.elasticbeanstalk.com/ 
@@ -184,6 +191,10 @@ Select  punch_createtime,t_books.bookname as bookname
 from t_punch_records  left join t_books on t_punch_records.book_id=t_books.id; 
 
 
+增加字段
+    mysql> ALTER TABLE awsdatabase.t_punch_records ADD count int(11) default 1;
+
+
 CREATE TABLE `users` (
  `id` int(10) NOT NULL,
  `username` varchar(32) NOT NULL,
@@ -274,3 +285,12 @@ npm run dev
 -------------------------------------------------------------------------------------
 bootstrap插件学习-bootstrap.alert.js
 https://www.bbsmax.com/A/QW5YZMD3dm/
+
+-------------------------------------------------------------------------------------
+
+配色
+http://www.colorhunt.co/
+https://uigradients.com/#Candy
+https://webgradients.com/
+https://color.adobe.com/zh/create/color-wheel/
+https://www.colordrop.io/

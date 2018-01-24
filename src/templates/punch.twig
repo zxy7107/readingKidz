@@ -1,17 +1,44 @@
 {% include 'header.twig' %}
-<div id="app">
+<div id="punch-app">
 	<div class="row">
 	  <div class="col-lg-12">
 	    <div class="input-group">
 	      <input type="text" id="searchWords" name="searchWords" class="form-control" data-provide="typeahead" autocomplete="off" placeholder="请输入要搜索关键词" v-model="keyword">
 	      <span class="input-group-btn">
-	      <button id="refresh1" type="button" class="btn btn-default" @click="postPunch">打卡</button>
+	      <button id="refresh1" type="button" class="btn btn-default" @click="postPunch()">打卡</button>
 	      </span>
 	    </div><!-- /input-group -->
 	  </div><!-- /.col-lg-6 -->
 	</div><!-- /.row -->
 	<loading v-if="changer"></loading>
 	<alert v-if="a.message" :type="a.type" :close="a.close" @close="closeAlert">${a.message}<span slot="foo">&times;</span></alert>
+
+
+<div class="row" v-for="(bookname, index) in recentlyBooks" >
+	<div class="col-xs-7">
+		<h4>${bookname}</h4>
+	</div>
+  <div class="col-xs-3 ">
+    <div class="input-group">
+      <span class="input-group-btn">
+        <button class="btn btn-default btn-minus" type="button" @click="addMinusBookCounts('minus', index)"><i class="glyphicon glyphicon-minus"></i></button>
+      </span>
+      <input type="text" class="form-control text-center" v-model="bookCounts[index]">
+      <span class="input-group-btn">
+        <button class="btn btn-default btn-plus" type="button" @click="addMinusBookCounts('add', index)"><i class="glyphicon glyphicon-plus"></i></button>
+      </span>
+    </div><!-- /input-group -->
+   
+   
+  </div>
+   <div class="col-xs-2">
+		 <span class="input-group-btn" style="padding-left:20px;">
+      	<button  type="button" class="btn btn-default" @click="postPunch(index)">打卡</button>
+      </span>
+	</div>
+</div><!-- /.row -->
+
+
 </div>
 {% include 'footer.twig' %}
 <script src="assets/js/controller/punchview.js"></script>

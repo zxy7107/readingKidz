@@ -43,10 +43,10 @@ INSERT INTO `t_books` (`bookname`,`publication_date`, `purchase_date`) VALUES
 ("Walking Through The Jungle", "2018-1-1", "2018-1-1"),
 ("The Foot Book", "2018-1-1", "2018-1-1"),
 ("Is Your Mama a Llama? ", "2018-1-1", "2018-1-1"),
-("Animal Boogie", "2018-1-1", "2018-1-1"),
+("The Animal Boogie", "2018-1-1", "2018-1-1"),
 ("One Fish Two Fish Red Fish Blue Fish", "2018-1-1", "2018-1-1"),
 ("Kipper’s A to Z", "2018-1-1", "2018-1-1"),
-("Journey Home From Grandpa", "2018-1-1", "2018-1-1"),
+("The Journey Home From Grandpa", "2018-1-1", "2018-1-1"),
 ("Chicken Soup With Rice: A Book of Months", "2018-1-1", "2018-1-1"),
 ("On Market Street", "2018-1-1", "2018-1-1"),
 ("Silly Sally", "2018-1-1", "2018-1-1"),
@@ -199,3 +199,18 @@ INSERT INTO `t_books` (`bookname`,`publication_date`, `purchase_date`) VALUES
 ("宝贝亲亲10", "2018-1-1", "2017-11-18"),
 ("宝贝亲亲11", "2018-1-1", "2017-11-18"),
 ("宝贝亲亲12", "2018-1-1", "2017-11-18");
+
+INSERT INTO awsdatabase.t_books (`bookname`,`publication_date`, `purchase_date`) VALUES
+("WHEELS ON THE BUS", "2018-1-1", "2018-1-1");
+
+INSERT INTO awsdatabase.t_books (`bookname`,`publication_date`, `purchase_date`) VALUES
+("温妮的海盗之旅", "2015-6-1", "2017-2-11"),
+("温妮女巫大冒险", "2015-6-1", "2017-2-11");
+
+INSERT INTO awsdatabase.t_books (`bookname`,`publication_date`, `purchase_date`) VALUES ("折耳兔奇奇（中英双语）", "2016-4-1", "2017-11-11");
+
+INSERT INTO awsdatabase.t_books (`bookname`,`publication_date`, `purchase_date`) VALUES ("温妮和捣蛋机器人", "2015-6-1", "2017-2-11");
+INSERT INTO awsdatabase.t_books (`bookname`,`publication_date`, `purchase_date`) VALUES ("杰瑞的冷静太空", "2012-12-1", "2017-7-5");
+INSERT INTO awsdatabase.t_books (`bookname`,`publication_date`, `purchase_date`) VALUES ("肚子里有个火车站", "2017-6-1", "2017-8-11");
+INSERT INTO awsdatabase.t_books (`bookname`,`publication_date`, `purchase_date`) VALUES ("好饿的小蛇", "2018-1-1", "2017-8-11"),("古利和古拉", "2012-1-1", "2017-8-11");
+INSERT INTO awsdatabase.t_books (`bookname`,`publication_date`, `purchase_date`) VALUES ("Willy the Wimp", "2018-1-1", "2018-1-1");

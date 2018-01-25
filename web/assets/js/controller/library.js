@@ -78,7 +78,7 @@ require(['vue', '$', 'bootstrap', 'popover', 'bootstrap-year-calendar', 'bootstr
         })
 
         var app = new Vue({
-            el: '#punch-app',
+            el: '#library-app',
             delimiters: ['${', '}'],
             data: {
                 keyword: '',
@@ -86,7 +86,8 @@ require(['vue', '$', 'bootstrap', 'popover', 'bootstrap-year-calendar', 'bootstr
                 alert: {},
                 changer: false,
                 bookCounts: [],
-                recentlyBooks: []
+                booklist: [],
+                booklistComplete: []
             },
             computed: {
                 a: function() {
@@ -112,41 +113,17 @@ require(['vue', '$', 'bootstrap', 'popover', 'bootstrap-year-calendar', 'bootstr
             },
             mounted: function() {
                 var self = this;
-                self.getRecentlyBooks();
+                self.getBookList();
                 $('#searchWords').typeahead({
                     source: function(query, process) {
                         //query是输入值
                         // $.getJSON('http://127.0.0.1:8099/getBookList', { "query": query }, function (data) {
-                        // 	process(data);
+                        //  process(data);
                         // });
 
                         if (self.booklist.length == 0) {
                             self.loading.in();
-                            $.ajax({
-                                url: "http://readingkid.us-east-2.elasticbeanstalk.com/getBookList",
-                                method: 'post',
-                                dataType: 'json',
-                                context: 'application/json;charset=utf-8',
-                                success: function(data) {
-                                    var tmp = [];
-                                    // console.log(data)
-                                    _.each(data, function(v, k) {
-                                        tmp.push(v['bookname'])
-                                    })
-                                    // console.log(tmp)
-                                    self.booklist = tmp;
-                                    process(self.booklist);
-                                    self.loading.out();
-                                },
-                                error: function(data) {
-                                    self.alert = {
-                                        close: true,
-                                        type: 'danger',
-                                        message: JSON.stringify(data)
-                                    }
-                                    self.loading.out();
-                                }
-                            });
+                            self.getBookList(process);
                         } else {
                             process(self.booklist);
 
@@ -187,6 +164,7 @@ require(['vue', '$', 'bootstrap', 'popover', 'bootstrap-year-calendar', 'bootstr
                                 type: 'success',
                                 message: res.content + '  ' + res.file_name
                             }
+                            self.getBookList();
                         
 		                } else {
 		                    self.alert = {
@@ -198,48 +176,37 @@ require(['vue', '$', 'bootstrap', 'popover', 'bootstrap-year-calendar', 'bootstr
 
 		            });
             	},
-                getRecentlyBooks: function() {
+                getBookList: function(process) {
                     var self = this;
                     self.loading.in();
                     $.ajax({
-                        url: "http://readingkid.us-east-2.elasticbeanstalk.com/getRecentlyBooks",
+                        url: "http://readingkid.us-east-2.elasticbeanstalk.com/getBookList",
                         method: 'post',
                         dataType: 'json',
                         context: 'application/json;charset=utf-8',
                         success: function(data) {
-                            self.loading.out();
-                            self.recentlyBooks = data;
-                            self.bookCounts = Array.apply(null, { length: data.length }).map(function(item, i) {
-                                return 1;
+                            self.booklistComplete = data;
+                            var tmp = [];
+                            // console.log(data)
+                            _.each(data, function(v, k) {
+                                tmp.push(v['bookname'])
                             })
-
-                            console.log(self.bookCounts)
+                            // console.log(tmp)
+                            self.booklist = tmp;
+                            if(process) {
+                                process(self.booklist);
+                            }
+                            self.loading.out();
                         },
                         error: function(data) {
-                            self.loading.out();
                             self.alert = {
                                 close: true,
                                 type: 'danger',
                                 message: JSON.stringify(data)
                             }
+                            self.loading.out();
                         }
                     });
-                },
-                addMinusBookCounts: function(type, index) {
-                    var self = this;
-                    switch (type) {
-                        case 'minus':
-                            if (self.bookCounts[index] > 1) {
-                                Vue.set(self.bookCounts, index, parseInt(self.bookCounts[index], 10) - 1)
-                            }
-                            break;
-                        case 'add':
-                        default:
-                            if (self.bookCounts[index] > 0) {
-                                Vue.set(self.bookCounts, index, parseInt(self.bookCounts[index], 10) + 1)
-                            }
-                            break;
-                    }
                 },
                 closeAlert: function() {
                     var self = this;
@@ -283,7 +250,7 @@ require(['vue', '$', 'bootstrap', 'popover', 'bootstrap-year-calendar', 'bootstr
                                         type: 'success',
                                         message: 'bookid: ' + data.result.book_id + '  bookname: ' + data.result.book_name+ '  count: ' + data.result.count
                                     }
-                                    self.getRecentlyBooks();
+                                    self.getBookList();
                                 } else {
                                     self.alert = {
                                         close: true,

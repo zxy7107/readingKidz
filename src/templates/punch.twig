@@ -15,31 +15,30 @@
 
 
 <div class="row" v-for="(bookname, index) in recentlyBooks" >
-	<div class="col-xs-7">
-		<h4>${bookname}</h4>
+	<div class="col-xs-5 col-sm-7 col-md-8">
+		<h5>${bookname}</h5>
 	</div>
-  <div class="col-xs-3 ">
+  <div class="col-xs-4 col-sm-3 col-md-2" style="padding:0;">
     <div class="input-group">
       <span class="input-group-btn">
         <button class="btn btn-default btn-minus" type="button" @click="addMinusBookCounts('minus', index)"><i class="glyphicon glyphicon-minus"></i></button>
       </span>
-      <input type="text" class="form-control text-center" v-model="bookCounts[index]">
+      <input type="text" class="form-control text-center" v-model="bookCounts[index]" >
       <span class="input-group-btn">
         <button class="btn btn-default btn-plus" type="button" @click="addMinusBookCounts('add', index)"><i class="glyphicon glyphicon-plus"></i></button>
       </span>
     </div><!-- /input-group -->
-   
-   
   </div>
-   <div class="col-xs-2">
-		 <span class="input-group-btn" style="padding-left:20px;">
-      	<button  type="button" class="btn btn-default" @click="postPunch(index)">打卡</button>
-      </span>
+   <div class="col-xs-3 col-sm-2 col-md-2">
+    	<button  type="button" class="btn btn-default" @click="postPunch(index)">打卡</button>
 	</div>
 </div><!-- /.row -->
 
+<textarea type="text" v-model="keyword"></textarea>
+<input  id="photo" type="file" style="width:200px" value="" name="photo">
+<!-- <img :src="sku.photo"> -->
+<button class="ui button orange " @click="uploadimg">上传图片</button>
 
-</div>
 {% include 'footer.twig' %}
 <script src="assets/js/controller/punchview.js"></script>
 </body>

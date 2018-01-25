@@ -1,7 +1,12 @@
 {
     "require": {
-        "silex/silex": "~1.0",
-        "twig/twig": ">=1.8,<2.0-dev"
+        "silex/silex": "~2.0",
+        "twig/twig": ">=1.8,<2.0-dev",
+        "codeguy/upload": "*",
+        "symfony/framework-bundle": "3.4.x-dev"
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-0": {"ZM\\": "src/"}
+    }
 }

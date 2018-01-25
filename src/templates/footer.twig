@@ -3,12 +3,12 @@
        <ul class="nav nav-pills">
        		
             <li role="presentation" {% if tab=='index' %} class="active" {% endif %}>
-            	<a href="{{ app.request.baseUrl ~ '/' }}">Calendar</a>
+            	<a href="{{ app.request_stack.currentRequest.baseUrl ~ '/' }}">Calendar</a>
             </li>
             
-            <li role="presentation" {% if tab=='punch' %} class="active" {% endif %}><a href="{{ app.request.baseUrl ~ '/punchview' }}">Punch</a></li>
+            <li role="presentation" {% if tab=='punch' %} class="active" {% endif %}><a href="{{ app.request_stack.currentRequest.baseUrl ~ '/punchview' }}">Punch</a></li>
             <li role="presentation" {% if tab=='statistic' %} class="active" {% endif %}><a href="#">Statistic</a></li>
-            <li role="presentation" {% if tab=='library' %} class="active" {% endif %}><a href="#">Library</a></li>
+            <li role="presentation" {% if tab=='library' %} class="active" {% endif %}><a href="{{ app.request_stack.currentRequest.baseUrl ~ '/library' }}">Library</a></li>
         </ul>
     </div>
     <!-- /.container-fluid -->

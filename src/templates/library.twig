@@ -1,0 +1,38 @@
+{% include 'header.twig' %}
+<div id="library-app">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="input-group">
+                <input type="text" id="searchWords" name="searchWords" class="form-control" data-provide="typeahead" autocomplete="off" placeholder="请输入要搜索关键词" v-model="keyword">
+                <span class="input-group-btn">
+	      <button id="refresh1" type="button" class="btn btn-default" @click="postPunch()">打卡</button>
+	      </span>
+            </div>
+            <!-- /input-group -->
+        </div>
+        <!-- /.col-lg-6 -->
+    </div>
+    <!-- /.row -->
+    <loading v-if="changer"></loading>
+    <alert v-if="a.message" :type="a.type" :close="a.close" @close="closeAlert">${a.message}<span slot="foo">&times;</span></alert>
+    <textarea type="text" v-model="keyword"></textarea>
+    <input id="photo" type="file" style="width:200px" value="" name="photo">
+    <!-- <img :src="sku.photo"> -->
+    <button class="ui button orange " @click="uploadimg">上传图片</button>
+    <div class="row" v-for="(book, index) in booklistComplete">
+        <div class="col-xs-5 col-sm-7 col-md-8">
+            <h5>${book.bookname}</h5>
+        </div>
+        <div class="col-xs-4 col-sm-3 col-md-2" style="padding:0;">
+            <img :src="book.bookcover" alt="" style="width:100%;">
+        </div>
+        <div class="col-xs-3 col-sm-2 col-md-2">
+            <button type="button" class="btn btn-default" @click="postPunch(index)">打卡</button>
+        </div>
+    </div>
+    <!-- /.row -->
+    {% include 'footer.twig' %}
+    <script src="assets/js/controller/library.js"></script>
+    </body>
+
+    </html>

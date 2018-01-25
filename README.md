@@ -48,6 +48,12 @@ D:\Users\zhangxy\Documents\Learning\www\Apache24\conf\httpd.conf
 DocumentRoot "D:/Users/zhangxy/Documents/Learning/www/Apache24/htdocs/readingKidz/web"
 <Directory "D:/Users/zhangxy/Documents/Learning/www/Apache24/htdocs/readingKidz/web">
 
+#php5 新增
+LoadModule php5_module "D:/Users/zhangxy/Documents/Learning/www/php5/php5apache2_4.dll"
+AddType application/x-httpd-php .php .html .htm .php5
+PHPIniDir "D:/Users/zhangxy/Documents/Learning/www/php5"
+
+
 composer -V
 composer create-project topthink/think mixmatch-tp5 --prefer-dist
 composer.json 配置文件
@@ -193,6 +199,8 @@ from t_punch_records  left join t_books on t_punch_records.book_id=t_books.id;
 
 增加字段
     mysql> ALTER TABLE awsdatabase.t_punch_records ADD count int(11) default 1;
+    mysql> ALTER TABLE awsdatabase.t_books ADD bookcover varchar(255) default null;
+    mysql> UPDATE awsdatabase.t_books SET bookcover = '' WHERE publisher = '';
 
 
 CREATE TABLE `users` (
@@ -294,3 +302,92 @@ https://uigradients.com/#Candy
 https://webgradients.com/
 https://color.adobe.com/zh/create/color-wheel/
 https://www.colordrop.io/
+
+-------------------------------------------------------------------------------------
+Symfony2使用第三方库Upload制作图片上传【原创】
+http://blog.it985.com/6544.html
+
+-------------------------------------------------------------------------------------
+
+composer.json版本号
+https://docs.phpcomposer.com/01-basic-usage.html#Next-Significant-Release
+
+像 ~1.2 （允许1.2以上的任何版本，但不包括2.0）
+
+
+-------------------------------------------------------------------------------------
+Upgrading Silex 1.x to 2.x
+https://github.com/silexphp/Silex/wiki/Upgrading-Silex-1.x-to-2.x
+
+
+-------------------------------------------------------------------------------------
+https://getcomposer.org/doc/01-basic-usage.md#autoloading
+You can even add your own code to the autoloader by adding an autoload field to composer.json.
+
+{
+    "autoload": {
+        "psr-4": {"Acme\\": "src/"}
+    }
+}
+
+Composer will register a PSR-4 autoloader for the Acme namespace.
+
+You define a mapping from namespaces to directories. The src directory would be in your project root, on the same level as vendor directory is. An example filename would be src/Foo.php containing an Acme\Foo class.
+
+After adding the autoload field, you have to re-run dump-autoload to re-generate the vendor/autoload.php file.
+
+
+-------------------------------------------------------------------------------------
+如何安装第三方Bundle
+http://symfonychina.com/doc/current/bundles/installation.html
+
+
+$ composer require friendsofsymfony/user-bundle "~2.0"
+
+
+-------------------------------------------------------------------------------------
+
+用Silex开发一个RESTful API（已完成）
+https://www.gitbook.com/book/taylorr/-silex-restful-api/details
+
+-------------------------------------------------------------------------------------
+
+
+        // "symfony/symfony": "3.0.*",
+        // "symfony/http-foundation": "~2.8|^3.0",
+
+
+https://packagist.org/packages/symfony/filesystem
+composer require symfony/filesystem
+
+
+
+
+
+
+symfony/framework-bundle
+https://github.com/symfony/framework-bundle
+
+
+composer require symfony/framework-bundle
+
+-------------------------------------------------------------------------------------
+
+symphony文档
+http://api.symfony.com/2.7/Symfony/Bundle/FrameworkBundle/Controller.html
+
+
+-------------------------------------------------------------------------------------
+Fatal error: Class 'finfo' not found in
+一番查看搜索后得知，未安装和开启php的fileinfo扩展，解决方法
+php -i|grep fileinfo 若出现 fileinfo fileinfo support => enabled 则代表fileinfo扩展可用,否则不可用。
+
+
+修改php.ini
+
+加入:extension=fileinfo.so
+
+
+-------------------------------------------------------------------------------------
+How to use controllers like in Symfony2 framework
+https://gist.github.com/kix/3897241

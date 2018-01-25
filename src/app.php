@@ -7,6 +7,9 @@ use Silex\Application;
 use Silex\Provider\TwigServiceProvider;
 use Symfony\Component\HttpFoundation\Request;
 
+
+
+
 // Setup the application
 $app = new Application();
 $app['debug'] = true;
@@ -19,9 +22,13 @@ $app->register(new TwigServiceProvider, array(
 $app['db.table'] = DB_TABLE;
 $app['db.table_punch'] = DB_TABLE_PUNCH;
 $app['db.dsn'] = 'mysql:dbname=' . DB_NAME . ';host=' . DB_HOST;
-$app['db'] = $app->share(function ($app) {
+// $app['db'] = $app->share(function ($app) {
+//     return new PDO($app['db.dsn'], DB_USER, DB_PASSWORD);
+// });
+
+$app['db'] = function($app) {
     return new PDO($app['db.dsn'], DB_USER, DB_PASSWORD);
-});
+};
 
 function array2object($array) {
   if (is_array($array)) {
@@ -46,6 +53,10 @@ function object2array($object) {
   return $array;
 }
 
+
+$app->mount('/zm', new \ZM\ApiBundle\Controller\HelloControllerProvider());
+$app->mount('/api', new \ZM\RouteBundle\Controller\ApiProvider());
+
 // Handle the index page
 $app->match('/', function () use ($app) {
     //$query = $app['db']->prepare("SELECT message, author FROM {$app['db.table']}");
@@ -59,6 +70,7 @@ $app->match('/', function () use ($app) {
         'tab' => 'index'
     ));
 });
+
 $app->match('/index_original', function () use ($app) {
     //$query = $app['db']->prepare("SELECT message, author FROM {$app['db.table']}");
     $query = $app['db']->prepare("SELECT * FROM {$app['db.table']}");
@@ -131,6 +143,15 @@ $app->match('/punchview', function (Request $request) use ($app) {
         'title' => 'Punch Every Day!',
         'alert' => '',
         'tab' => 'punch'
+    ));
+});
+$app->match('/library', function (Request $request) use ($app) {
+    
+
+    return $app['twig']->render('library.twig', array(
+        'title' => 'Book Library',
+        'alert' => '',
+        'tab' => 'library'
     ));
 });
 
@@ -239,6 +260,7 @@ $app->post('/getBookList', function (Request $request) use ($app) {
                    'series' => $msg->series,
                    'language' => $msg->language,
                    'users' => $msg->users,
+                   'bookcover' => $msg->bookcover,
            );
 
     }
@@ -310,6 +332,8 @@ $app->post('/getRecentlyBooks', function (Request $request) use ($app) {
     return $res;
 });
 
+
+
 $app->post('/getPunchList', function (Request $request) use ($app) {
 
 
@@ -333,7 +357,10 @@ $app->post('/getPunchList', function (Request $request) use ($app) {
     return $res;
 });
 
-
+$app->match('/lucky', function () use ($app) {
+    $user = new LuckyController();
+    $user->numberAction();
+});
 
 $app->get('/', function() use ($list) {
 

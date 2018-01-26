@@ -17,6 +17,15 @@ Follow the steps below to deploy the demo application to an Elastic Beanstalk PH
 readingKidz 
 http://readingkid.us-east-2.elasticbeanstalk.com/
 
+
+v1.0.5
+1. book library模糊匹配改用jQuery Typeahead.js
+
+
+v1.0.4
+1. 新增 上传bookcover图片
+
+
 v1.0.3
 1. 新增 “最近打卡的书”
 2. 新增 按阅读次数打卡
@@ -391,3 +400,28 @@ php -i|grep fileinfo 若出现 fileinfo fileinfo support => enabled 则代表fil
 -------------------------------------------------------------------------------------
 How to use controllers like in Symfony2 framework
 https://gist.github.com/kix/3897241
+
+-------------------------------------------------------------------------------------
+
+使用 PuTTY 从 Windows 连接到 Linux 实例
+
+
+-------------------------------------------------------------------------------------
+复制一个数组
+function runScripts() {
+    if (arguments.length === 0) return;
+    var args = [];
+    Array.prototype.push.apply( args, arguments );
+
+    chrome.tabs.executeScript(null, {
+        file: args.shift();
+    }, function() {
+             // using the modified Array based on the original arguments object
+        runScripts.apply(null, args);
+    });
+}
+
+
+-------------------------------------------------------------------------------------
+typeahead模糊搜索查询-结合bootstrap和jquery
+http://blog.csdn.net/u011410529/article/details/70650707

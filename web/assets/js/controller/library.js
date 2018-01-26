@@ -1,5 +1,7 @@
-require(['vue', '$', 'bootstrap', 'popover', 'bootstrap-year-calendar', 'bootstrap-datepicker', 'underscore', 'bootstrap3-typeahead'],
-    function(Vue) {
+require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calendar', 'bootstrap-datepicker',
+        'underscore', 'typeahead'
+    ],
+    function(Vue, Bloodhound) {
 
         // var getChildrenTextContent = function (children) {
         //   return children.map(function (node) {
@@ -87,7 +89,8 @@ require(['vue', '$', 'bootstrap', 'popover', 'bootstrap-year-calendar', 'bootstr
                 changer: false,
                 bookCounts: [],
                 booklist: [],
-                booklistComplete: []
+                booklistComplete: [],
+                raw_booklist: []
             },
             computed: {
                 a: function() {
@@ -114,68 +117,101 @@ require(['vue', '$', 'bootstrap', 'popover', 'bootstrap-year-calendar', 'bootstr
             mounted: function() {
                 var self = this;
                 self.getBookList();
-                $('#searchWords').typeahead({
-                    source: function(query, process) {
-                        //query是输入值
-                        // $.getJSON('http://127.0.0.1:8099/getBookList', { "query": query }, function (data) {
-                        //  process(data);
-                        // });
 
-                        if (self.booklist.length == 0) {
-                            self.loading.in();
-                            self.getBookList(process);
-                        } else {
-                            process(self.booklist);
 
-                        }
+                // $('#searchWords').typeahead({
+                //   hint: true,
+                //   highlight: true,
+                //   minLength: 1
+                // },
+                // {
+                //   name: 'bookname',
+                //   source: self.booklist
+                // });
 
-                    },
-                    updater: function(item) {
-                        return item.replace(/<a(.+?)<\/a>/, ""); //这里一定要return，否则选中不显示
-                    },
-                    afterSelect: function(item) {
-                        //选择项之后的时间，item是当前选中的项
-                        // alert(item);
-                        self.keyword = item;
-                    },
-                    items: 8, //显示8条
-                    delay: 500 //延迟时间
-                });
+                // $('#searchWords').on('typeahead:render', function(ev, suggestion) {
+                //   console.log('Selection: ' + suggestion);
+                // });
+
+                // $('#searchWords').typeahead({
+                //     source: function(query, process) {
+                //         //query是输入值
+                //         // $.getJSON('http://127.0.0.1:8099/getBookList', { "query": query }, function (data) {
+                //         //  process(data);
+                //         // });
+
+                //         if (self.booklist.length == 0) {
+                //             self.loading.in();
+                //             self.getBookList(process);
+                //         } else {
+                //             process(self.booklist);
+
+                //         }
+
+                //     },
+                //     highlighter: function(items){
+                //         console.log(items)
+                //         return item.replace(/<a(.+?)<\/a>/, "");
+                //     },
+                //     updater: function(item) {
+                //         console.log(item)
+                //         return item.replace(/<a(.+?)<\/a>/, ""); //这里一定要return，否则选中不显示
+                //     },
+                //     afterSelect: function(item) {
+                //         //选择项之后的时间，item是当前选中的项
+                //         // alert(item);
+                //         self.keyword = item;
+                //     },
+                //     items: 8, //显示8条
+                //     delay: 500 //延迟时间
+                // });
+
+
+
             },
             methods: {
-            	uploadimg: function(){
-					var self = this;
-		            var formData = new FormData();
+                
+                uploadimg: function() {
+                    var self = this;
+                    var formData = new FormData();
 
-		            formData.append("user_id", self.keyword);
-		            formData.append("bookcover", $('#photo')[0].files[0]);
+                    formData.append("user_id", self.keyword);
+                    formData.append("bookcover", $('#photo')[0].files[0]);
                     self.loading.in();
-		            $.ajax({
-		                method: "POST",
-		                url:"http://readingkid.us-east-2.elasticbeanstalk.com/api/uploadBookcoverAction",
-		                data: formData,
-		                processData: false,
-		                contentType: false
-		            }).always(function(res) {
+                    $.ajax({
+                        method: "POST",
+                        url: "http://readingkid.us-east-2.elasticbeanstalk.com/api/uploadBookcoverAction",
+                        data: formData,
+                        processData: false,
+                        contentType: false
+                    }).always(function(res) {
                         self.loading.out();
-		                
-		                if (res.flag==1) {
+
+                        if (res.flag == 1) {
                             self.alert = {
                                 type: 'success',
                                 message: res.content + '  ' + res.file_name
                             }
                             self.getBookList();
-                        
-		                } else {
-		                    self.alert = {
+
+                        } else {
+                            self.alert = {
                                 close: true,
                                 type: 'danger',
                                 message: JSON.stringify(res)
                             }
-		                }
+                        }
 
-		            });
-            	},
+                    });
+                },
+                resetAllBooklist: function(){
+                    var self = this;
+                    console.log('change')
+                    console.log(self.keyword)
+                    if(self.keyword == '') {
+                                    self.booklistComplete = self.raw_booklist;
+                                }
+                },
                 getBookList: function(process) {
                     var self = this;
                     self.loading.in();
@@ -186,6 +222,7 @@ require(['vue', '$', 'bootstrap', 'popover', 'bootstrap-year-calendar', 'bootstr
                         context: 'application/json;charset=utf-8',
                         success: function(data) {
                             self.booklistComplete = data;
+                            self.raw_booklist = data;
                             var tmp = [];
                             // console.log(data)
                             _.each(data, function(v, k) {
@@ -193,10 +230,81 @@ require(['vue', '$', 'bootstrap', 'popover', 'bootstrap-year-calendar', 'bootstr
                             })
                             // console.log(tmp)
                             self.booklist = tmp;
-                            if(process) {
+                            if (process) {
                                 process(self.booklist);
                             }
                             self.loading.out();
+
+                            var states = self.booklist;
+                            // constructs the suggestion engine
+                            var engine = new Bloodhound({
+                                initialize: false,  //是否初始化，暂不初始化
+                                datumTokenizer: Bloodhound.tokenizers.obj.everyword('bookname'),
+                                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                                identify: function(obj) {return obj.bookname},
+                                local: data
+                            });
+
+                            function nflTeamsWithDefaults(q, sync) {
+                                if (q === '') {
+                                    //sync(engine.get('5000', '2', '102165','102166')); 通过id去拿
+
+                                    sync(engine.all());//直接拿全部
+                                }
+                                else {
+                                    engine.search(q, sync);//进行按照搜索
+                                }
+                            }
+
+                            $('#searchWords').typeahead({
+                                hint: false,
+                                highlight: true,
+                                minLength: 0,  //最小长度为0的时候就启用搜索
+                                classNames: {
+                                    input: 'form-control',
+                                    // hint: 'Typeahead-hint',
+                                    // selectable: 'Typeahead-selectable'
+                                  }
+                            }, 
+                            // {
+                            //     name: 'books',
+                            //     display: 'bookname',
+                            //     source: nflTeamsWithDefaults,
+                            //     limit: 1000,
+                            //     // templates: {
+                            //     //     // header: '<h3>books</h3>',
+                            //     //     suggestion: function(){
+                            //     //         return '<span></span>'
+                            //     //     }
+                            //     //   }
+                            // }, 
+                            {
+                                name: 'activities',
+                                display: 'bookname',
+                                source: nflTeamsWithDefaults,
+                                limit: 1000,
+                                templates: {
+                                    // header: '<h3>books</h3>',
+                                    suggestion: function(){
+                                        return '<span></span>'
+                                    }
+                                  }
+                            });
+                            $('#searchWords').bind('typeahead:render', function(ev) {
+                                var args = [];
+                                Array.prototype.push.apply(args, arguments);
+                                self.booklistComplete = _.rest(args);
+                            });
+
+                            $('#searchWords').bind('typeahead:select', function(ev, suggestion){
+                                var self = this;
+                                self.keyword = suggestion.bookname;
+                            })
+
+                            engine.clear(); //清空一下初始数据
+                            engine.local = data; //设置一下local
+                            engine.initialize(true); //初始化
+
                         },
                         error: function(data) {
                             self.alert = {
@@ -225,8 +333,8 @@ require(['vue', '$', 'bootstrap', 'popover', 'bootstrap-year-calendar', 'bootstr
                             }
                             break;
                         }
-                        if(!bookname && !self.keyword) {
-                        	self.alert = {
+                        if (!bookname && !self.keyword) {
+                            self.alert = {
                                 message: 'RecentlyBook 书名无效'
                             }
                             break;
@@ -237,7 +345,7 @@ require(['vue', '$', 'bootstrap', 'popover', 'bootstrap-year-calendar', 'bootstr
                             method: 'post',
                             dataType: 'json',
                             data: {
-                                searchWords: bookname? bookname : self.keyword,
+                                searchWords: bookname ? bookname : self.keyword,
                                 count: self.bookCounts[index]
                             },
                             context: 'application/json;charset=utf-8',
@@ -248,7 +356,7 @@ require(['vue', '$', 'bootstrap', 'popover', 'bootstrap-year-calendar', 'bootstr
                                     self.keyword = '';
                                     self.alert = {
                                         type: 'success',
-                                        message: 'bookid: ' + data.result.book_id + '  bookname: ' + data.result.book_name+ '  count: ' + data.result.count
+                                        message: 'bookid: ' + data.result.book_id + '  bookname: ' + data.result.book_name + '  count: ' + data.result.count
                                     }
                                     self.getBookList();
                                 } else {

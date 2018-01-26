@@ -90,9 +90,29 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                 bookCounts: [],
                 booklist: [],
                 booklistComplete: [],
-                raw_booklist: []
+                raw_booklist: [],
+                newbook:{
+                    author: '',
+                    bookcover: '',
+                    bookname: '',
+                    language: '',
+                    message: '',
+                    price: '',
+                    publicationDate: '',
+                    publisher: '',
+                    series: '',
+                    users: ''
+                }
             },
             computed: {
+                newbook: function(){
+                    var self = this;
+                    var obj = {};
+                    _.each(_.keys(self.raw_booklist[0]), function(key){
+                        obj[key] = ''
+                    })
+                    return obj;
+                },
                 a: function() {
                     var self = this;
                     var defaultAlert = {
@@ -112,65 +132,71 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
 
                         }
                     }
+                },
+                engine: function() {
+                    var self = this;
+                    var engine = new Bloodhound({
+                        initialize: false, //是否初始化，暂不初始化
+                        datumTokenizer: Bloodhound.tokenizers.obj.everyword('bookname'),
+                        queryTokenizer: Bloodhound.tokenizers.whitespace,
+                        identify: function(obj) { return obj.bookname },
+                        local: self.raw_booklist
+                    });
+                    return engine;
                 }
             },
             mounted: function() {
                 var self = this;
                 self.getBookList();
-
-
-                // $('#searchWords').typeahead({
-                //   hint: true,
-                //   highlight: true,
-                //   minLength: 1
-                // },
-                // {
-                //   name: 'bookname',
-                //   source: self.booklist
-                // });
-
-                // $('#searchWords').on('typeahead:render', function(ev, suggestion) {
-                //   console.log('Selection: ' + suggestion);
-                // });
-
-                // $('#searchWords').typeahead({
-                //     source: function(query, process) {
-                //         //query是输入值
-                //         // $.getJSON('http://127.0.0.1:8099/getBookList', { "query": query }, function (data) {
-                //         //  process(data);
-                //         // });
-
-                //         if (self.booklist.length == 0) {
-                //             self.loading.in();
-                //             self.getBookList(process);
-                //         } else {
-                //             process(self.booklist);
-
-                //         }
-
-                //     },
-                //     highlighter: function(items){
-                //         console.log(items)
-                //         return item.replace(/<a(.+?)<\/a>/, "");
-                //     },
-                //     updater: function(item) {
-                //         console.log(item)
-                //         return item.replace(/<a(.+?)<\/a>/, ""); //这里一定要return，否则选中不显示
-                //     },
-                //     afterSelect: function(item) {
-                //         //选择项之后的时间，item是当前选中的项
-                //         // alert(item);
-                //         self.keyword = item;
-                //     },
-                //     items: 8, //显示8条
-                //     delay: 500 //延迟时间
-                // });
-
-
-
+                self.bindTypeahead();
             },
             methods: {
-                
+                bindTypeahead: function() {
+                    var self = this;
+                    $('#searchWords').typeahead({
+                            hint: false,
+                            highlight: true,
+                            minLength: 0, //最小长度为0的时候就启用搜索
+                            classNames: {
+                                input: 'form-control',
+                                // hint: 'Typeahead-hint',
+                                // selectable: 'Typeahead-selectable'
+                            }
+                        },
+                        // {
+                        //     name: 'activities',
+                        //     display: 'bookname',
+                        //     source: self.nflTeamsWithDefaults,
+                        //     limit: 1000,
+                        //     // templates: {
+                        //     //     // header: '<h3>books</h3>',
+                        //     //     suggestion: function(){
+                        //     //         return '<span></span>'
+                        //     //     }
+                        //     //   }
+                        // }, 
+                        {
+                            name: 'books',
+                            display: 'bookname',
+                            source: self.nflTeamsWithDefaults,
+                            limit: 1000,
+                            templates: {
+                                // header: '<h3>books</h3>',
+                                suggestion: function() {
+                                    return '<span></span>'
+                                }
+                            }
+                        });
+                    $('#searchWords').bind('typeahead:render', function(ev) {
+                        var args = [];
+                        Array.prototype.push.apply(args, arguments);
+                        self.booklistComplete = _.rest(args);
+                    });
+
+                    $('#searchWords').bind('typeahead:select', function(ev, suggestion) {
+                        self.keyword = suggestion.bookname;
+                    })
+                },
                 uploadimg: function() {
                     var self = this;
                     var formData = new FormData();
@@ -186,12 +212,13 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                         contentType: false
                     }).always(function(res) {
                         self.loading.out();
-
+                        $('#photo').val('');
                         if (res.flag == 1) {
                             self.alert = {
                                 type: 'success',
                                 message: res.content + '  ' + res.file_name
                             }
+                            $('#photo').val('');
                             self.getBookList();
 
                         } else {
@@ -204,13 +231,23 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
 
                     });
                 },
-                resetAllBooklist: function(){
+                resetAllBooklist: function() {
                     var self = this;
                     console.log('change')
                     console.log(self.keyword)
-                    if(self.keyword == '') {
-                                    self.booklistComplete = self.raw_booklist;
-                                }
+                    if (self.keyword == '') {
+                        self.booklistComplete = self.raw_booklist;
+                    }
+                },
+                nflTeamsWithDefaults: function(q, sync) {
+                    var self = this;
+                    if (q === '') {
+                        //sync(engine.get('5000', '2', '102165','102166')); 通过id去拿
+
+                        sync(self.engine.all()); //直接拿全部
+                    } else {
+                        self.engine.search(q, sync); //进行按照搜索
+                    }
                 },
                 getBookList: function(process) {
                     var self = this;
@@ -236,74 +273,23 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                             self.loading.out();
 
                             var states = self.booklist;
-                            // constructs the suggestion engine
-                            var engine = new Bloodhound({
-                                initialize: false,  //是否初始化，暂不初始化
-                                datumTokenizer: Bloodhound.tokenizers.obj.everyword('bookname'),
-                                queryTokenizer: Bloodhound.tokenizers.whitespace,
-                                identify: function(obj) {return obj.bookname},
-                                local: data
-                            });
 
-                            function nflTeamsWithDefaults(q, sync) {
-                                if (q === '') {
-                                    //sync(engine.get('5000', '2', '102165','102166')); 通过id去拿
+                            // function nflTeamsWithDefaults(q, sync) {
+                            //     if (q === '') {
+                            //         //sync(engine.get('5000', '2', '102165','102166')); 通过id去拿
 
-                                    sync(engine.all());//直接拿全部
-                                }
-                                else {
-                                    engine.search(q, sync);//进行按照搜索
-                                }
-                            }
+                            //         sync(self.engine.all());//直接拿全部
+                            //     }
+                            //     else {
+                            //         self.engine.search(q, sync);//进行按照搜索
+                            //     }
+                            // }
 
-                            $('#searchWords').typeahead({
-                                hint: false,
-                                highlight: true,
-                                minLength: 0,  //最小长度为0的时候就启用搜索
-                                classNames: {
-                                    input: 'form-control',
-                                    // hint: 'Typeahead-hint',
-                                    // selectable: 'Typeahead-selectable'
-                                  }
-                            }, 
-                            // {
-                            //     name: 'books',
-                            //     display: 'bookname',
-                            //     source: nflTeamsWithDefaults,
-                            //     limit: 1000,
-                            //     // templates: {
-                            //     //     // header: '<h3>books</h3>',
-                            //     //     suggestion: function(){
-                            //     //         return '<span></span>'
-                            //     //     }
-                            //     //   }
-                            // }, 
-                            {
-                                name: 'activities',
-                                display: 'bookname',
-                                source: nflTeamsWithDefaults,
-                                limit: 1000,
-                                templates: {
-                                    // header: '<h3>books</h3>',
-                                    suggestion: function(){
-                                        return '<span></span>'
-                                    }
-                                  }
-                            });
-                            $('#searchWords').bind('typeahead:render', function(ev) {
-                                var args = [];
-                                Array.prototype.push.apply(args, arguments);
-                                self.booklistComplete = _.rest(args);
-                            });
 
-                            $('#searchWords').bind('typeahead:select', function(ev, suggestion){
-                                var self = this;
-                                self.keyword = suggestion.bookname;
-                            })
 
-                            engine.clear(); //清空一下初始数据
-                            engine.local = data; //设置一下local
-                            engine.initialize(true); //初始化
+                            self.engine.clear(); //清空一下初始数据
+                            self.engine.local = data; //设置一下local
+                            self.engine.initialize(true); //初始化
 
                         },
                         error: function(data) {

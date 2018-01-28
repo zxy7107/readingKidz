@@ -36,7 +36,7 @@ class DefaultController extends Controller {
         $storage = new \Upload\Storage\FileSystem($path);
         $file = new \Upload\File($str, $storage);
  
-        //如果文件名为空
+        // 如果文件名为空
         if ($file->getName() != '') {
             //设置文件名为用户的id
             $file->setName($user_id);

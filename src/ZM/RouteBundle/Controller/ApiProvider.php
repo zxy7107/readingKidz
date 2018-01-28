@@ -8,6 +8,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use ZM\ApiBundle\Controller\BookController AS BookController;
+use ZM\ApiBundle\Controller\SaveNewBookController AS SaveNewBookController;
+use ZM\ApiBundle\Controller\SaveNewActivityController AS SaveNewActivityController;
 
 class ApiProvider implements ControllerProviderInterface
 {
@@ -24,8 +26,21 @@ class ApiProvider implements ControllerProviderInterface
         $controllers->post('/uploadBookcoverAction', function (Application $app) {
             // return $app->redirect('/hello');
 
-		        $c = new BookController();
-		        return $c->uploadBookcoverAction($app);
+                $c = new BookController();
+                return $c->uploadBookcoverAction($app);
+        });
+
+        $controllers->post('/saveNewBookAction', function (Application $app) {
+            // return $app->redirect('/hello');
+
+                $c = new SaveNewBookController();
+                return $c->saveNewBookAction($app);
+        });
+        $controllers->post('/saveNewActivityAction', function (Application $app) {
+            // return $app->redirect('/hello');
+
+		        $c = new SaveNewActivityController();
+		        return $c->saveNewActivityAction($app);
         });
 
         return $controllers;

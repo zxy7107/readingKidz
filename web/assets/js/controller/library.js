@@ -91,17 +91,13 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                 booklist: [],
                 booklistComplete: [],
                 raw_booklist: [],
-                newbook:{
-                    author: '',
-                    bookcover: '',
-                    bookname: '',
-                    language: '',
-                    message: '',
-                    price: '',
-                    publicationDate: '',
-                    publisher: '',
-                    series: '',
-                    users: ''
+                newactivity:{
+                    title: '',
+                    place: '',
+                    figures: [],
+                    type: '',
+                    subtype: '',
+                    content: ''
                 }
             },
             computed: {
@@ -111,6 +107,7 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                     _.each(_.keys(self.raw_booklist[0]), function(key){
                         obj[key] = ''
                     })
+                    console.log(obj)
                     return obj;
                 },
                 a: function() {
@@ -151,6 +148,91 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                 self.bindTypeahead();
             },
             methods: {
+                saveNewActivity: function(){
+                    var self = this;
+                    console.log(self.newactivity)
+                    self.loading.in();
+
+
+                    var formData = new FormData();
+
+
+                    formData.append("title", self.newactivity.title);
+                    formData.append("place", self.newactivity.place);
+                    formData.append("type", self.newactivity.type);
+                    formData.append("subtype", self.newactivity.subtype);
+                    formData.append("content", self.newactivity.content);
+                    formData.append("figure", $('#figures1')[0].files[0]);
+
+                    $.ajax({
+                        // url: "http://readingkid.us-east-2.elasticbeanstalk.com/api/saveNewActivityAction",
+                        url: "http://127.0.0.1:8099/api/saveNewActivityAction",
+                        method: 'post',
+                        dataType: 'json',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        // context: 'application/json;charset=utf-8',
+                        success: function(data) {
+                            self.loading.out();
+                            if (data.code == 1) {
+                                self.alert = {
+                                    type: 'success',
+                                    message: data.resMessage + JSON.stringify(data.result)
+                                }
+                            } else {
+                                self.alert = {
+                                    close: true,
+                                    message: data.resMessage
+                                }
+                            }
+                        },
+                        error: function(data) {
+                            self.loading.out();
+                            self.alert = {
+                                close: true,
+                                type: 'danger',
+                                message: JSON.stringify(data)
+                            }
+                        }
+                    });
+                },
+                savechanges: function(){
+                    var self = this;
+                    console.log(self.newbook)
+                    self.loading.in();
+                    $.ajax({
+                        // url: "http://readingkid.us-east-2.elasticbeanstalk.com/api/saveNewBookAction",
+                        url: "http://127.0.0.1:8099/api/saveNewBookAction",
+                        method: 'post',
+                        dataType: 'json',
+                        data: self.newbook,
+                        context: 'application/json;charset=utf-8',
+                        success: function(data) {
+                            self.loading.out();
+                            if (data.code == 1) {
+                                self.alert = {
+                                    type: 'success',
+                                    message: data.resMessage + JSON.stringify(data.result)
+                                }
+                                self.getBookList();
+                            } else {
+                                self.alert = {
+                                    close: true,
+                                    message: data.resMessage
+                                }
+                            }
+                        },
+                        error: function(data) {
+                            self.loading.out();
+                            self.alert = {
+                                close: true,
+                                type: 'danger',
+                                message: JSON.stringify(data)
+                            }
+                        }
+                    });
+                },
                 bindTypeahead: function() {
                     var self = this;
                     $('#searchWords').typeahead({
@@ -206,7 +288,8 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                     self.loading.in();
                     $.ajax({
                         method: "POST",
-                        url: "http://readingkid.us-east-2.elasticbeanstalk.com/api/uploadBookcoverAction",
+                        // url: "http://readingkid.us-east-2.elasticbeanstalk.com/api/uploadBookcoverAction",
+                        url: "http://127.0.0.1:8099/api/uploadBookcoverAction",
                         data: formData,
                         processData: false,
                         contentType: false
@@ -231,14 +314,7 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
 
                     });
                 },
-                resetAllBooklist: function() {
-                    var self = this;
-                    console.log('change')
-                    console.log(self.keyword)
-                    if (self.keyword == '') {
-                        self.booklistComplete = self.raw_booklist;
-                    }
-                },
+           
                 nflTeamsWithDefaults: function(q, sync) {
                     var self = this;
                     if (q === '') {
@@ -253,7 +329,8 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                     var self = this;
                     self.loading.in();
                     $.ajax({
-                        url: "http://readingkid.us-east-2.elasticbeanstalk.com/getBookList",
+                        // url: "http://readingkid.us-east-2.elasticbeanstalk.com/getBookList",
+                        url: "http://127.0.0.1:8099/getBookList",
                         method: 'post',
                         dataType: 'json',
                         context: 'application/json;charset=utf-8',
@@ -327,7 +404,8 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                         }
                         self.loading.in();
                         $.ajax({
-                            url: "http://readingkid.us-east-2.elasticbeanstalk.com/punch",
+                            // url: "http://readingkid.us-east-2.elasticbeanstalk.com/punch",
+                            url: "http://127.0.0.1:8099/punch",
                             method: 'post',
                             dataType: 'json',
                             data: {

@@ -21,6 +21,8 @@ $app->register(new TwigServiceProvider, array(
 // Setup the database
 $app['db.table'] = DB_TABLE;
 $app['db.table_punch'] = DB_TABLE_PUNCH;
+$app['db.table_activity'] = DB_TABLE_ACTIVITY;
+$app['db.table_activity_figure'] = DB_TABLE_ACTIVITY_FIGURE;
 $app['db.dsn'] = 'mysql:dbname=' . DB_NAME . ';host=' . DB_HOST;
 // $app['db'] = $app->share(function ($app) {
 //     return new PDO($app['db.dsn'], DB_USER, DB_PASSWORD);
@@ -256,6 +258,7 @@ $app->post('/getBookList', function (Request $request) use ($app) {
                    'bookname' => $msg->bookname,
                    'publisher' => $msg->publisher,
                    'publicationDate' => $msg->publication_date,
+                   'purchaseDate' => $msg->purchase_date,
                    'price' => $msg->price,
                    'series' => $msg->series,
                    'language' => $msg->language,

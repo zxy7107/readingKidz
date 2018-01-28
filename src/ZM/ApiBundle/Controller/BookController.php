@@ -40,11 +40,8 @@ class BookController extends BaseController {
                         $path = 'image/bookcover/';
                         //获取上传文件后返回的文件名和扩展名
                         $file_name = $this->uploadPic($bookname, 'bookcover', $path);
-                    //     //修改用户contact表bookcover头像字段的值
-                    //     $conn->executeUpdate("UPDATE contact SET bookcover = ? WHERE id = ?", array($path . $file_name, $bookname));
 
                         $sql = "UPDATE {$app['db.table']} SET bookcover= (:bookcover) WHERE bookname= (:bookname)";
-
                         $query = $app['db']->prepare($sql);
                         $data = array(
                             ':bookcover' => $path.$file_name,

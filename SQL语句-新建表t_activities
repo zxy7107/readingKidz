@@ -1,0 +1,29 @@
+
+DROP TABLE IF EXISTS `awsdatabase`.`t_activities`;
+
+
+CREATE TABLE 
+  `awsdatabase`.`t_activities` (
+  `id` int(11) NOT NULL AUTO_INCREMENT ,   
+  `title` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' ,   
+  `place` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',   
+  `type` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',   
+  `subtype` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',   
+  `content` VARCHAR(1000) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',  
+  `datachange_createtime` TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP,   
+  `datachange_lasttime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+
+
+DROP TABLE IF EXISTS `awsdatabase`.`t_activities_figure`;
+
+
+CREATE TABLE 
+  `awsdatabase`.`t_activities_figure` (
+  `id` int(11) NOT NULL AUTO_INCREMENT ,   
+  `activity_id` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' ,   
+  `figure` VARCHAR(200) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '''',  
+  `datachange_createtime` TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP,   
+  `datachange_lasttime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8;

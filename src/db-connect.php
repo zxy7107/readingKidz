@@ -6,4 +6,6 @@
   // define('DB_TABLE', 'urler');
   define('DB_TABLE', 't_books');
   define('DB_TABLE_PUNCH', 't_punch_records');
+  define('DB_TABLE_ACTIVITY', 't_activities');
+  define('DB_TABLE_ACTIVITY_FIGURE', 't_activities_figure');
 ?>

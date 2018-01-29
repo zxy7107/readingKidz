@@ -58,4 +58,3 @@ typings/
 .env
 
 vendor/*
-web/image/bookcover/*

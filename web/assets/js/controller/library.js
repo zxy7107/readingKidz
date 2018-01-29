@@ -92,11 +92,14 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                 booklistComplete: [],
                 raw_booklist: [],
                 activitylist: [],
+                activitylistComplete: [],
+                raw_activitylist: [],
                 activeTab:{
                     all: true,
                     books: false,
                     activities: false
                 },
+                activityFigures: [],
                 newactivity:{
                     title: '',
                     place: '',
@@ -155,11 +158,22 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                         local: self.raw_booklist
                     });
                     return engine;
+                },
+                engineActivity: function() {
+                    var self = this;
+                    var engine = new Bloodhound({
+                        initialize: false, //是否初始化，暂不初始化
+                        datumTokenizer: Bloodhound.tokenizers.obj.everyword('fulltext'),
+                        queryTokenizer: Bloodhound.tokenizers.whitespace,
+                        identify: function(obj) { return obj.id },
+                        local: self.raw_activitylist
+                    });
+                    return engine;
                 }
             },
             mounted: function() {
                 var self = this;
-                self.getActivityList();
+                self.getActivityFiguresList();
                 self.getBookList();
                 self.bindTypeahead();
             },
@@ -273,18 +287,18 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                                 // selectable: 'Typeahead-selectable'
                             }
                         },
-                        // {
-                        //     name: 'activities',
-                        //     display: 'bookname',
-                        //     source: self.nflTeamsWithDefaults,
-                        //     limit: 1000,
-                        //     // templates: {
-                        //     //     // header: '<h3>books</h3>',
-                        //     //     suggestion: function(){
-                        //     //         return '<span></span>'
-                        //     //     }
-                        //     //   }
-                        // }, 
+                        {
+                            name: 'activities',
+                            display: 'content',
+                            source: self.nflTeamsWithDefaultsActivity,
+                            limit: 1000,
+                            templates: {
+                                // header: '<h3>books</h3>',
+                                suggestion: function(){
+                                    return '<span></span>'
+                                }
+                              }
+                        }, 
                         {
                             name: 'books',
                             display: 'bookname',
@@ -300,7 +314,17 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                     $('#searchWords').bind('typeahead:render', function(ev) {
                         var args = [];
                         Array.prototype.push.apply(args, arguments);
-                        self.booklistComplete = _.rest(args);
+                        console.log(args)
+                        var rest = _.rest(args);//去掉第一个参数ev
+                        if(!_.isEmpty(rest)) {
+                            if(_.has(rest[0], 'extension_activity')) {
+                                self.activitylistComplete = rest;
+                            }
+                            if(_.has(rest[0], 'bookname')) {
+                                self.booklistComplete = rest;
+                            }
+                        }
+                        
                     });
 
                     $('#searchWords').bind('typeahead:select', function(ev, suggestion) {
@@ -353,6 +377,16 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                         self.engine.search(q, sync); //进行按照搜索
                     }
                 },
+                nflTeamsWithDefaultsActivity: function(q, sync) {
+                    var self = this;
+                    if (q === '') {
+                        //sync(engine.get('5000', '2', '102165','102166')); 通过id去拿
+
+                        sync(self.engineActivity.all()); //直接拿全部
+                    } else {
+                        self.engineActivity.search(q, sync); //进行按照搜索
+                    }
+                },
                 getBookList: function(process) {
                     var self = this;
                     self.loading.in();
@@ -379,22 +413,35 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
 
                             var states = self.booklist;
 
-                            // function nflTeamsWithDefaults(q, sync) {
-                            //     if (q === '') {
-                            //         //sync(engine.get('5000', '2', '102165','102166')); 通过id去拿
-
-                            //         sync(self.engine.all());//直接拿全部
-                            //     }
-                            //     else {
-                            //         self.engine.search(q, sync);//进行按照搜索
-                            //     }
-                            // }
-
-
 
                             self.engine.clear(); //清空一下初始数据
                             self.engine.local = data; //设置一下local
                             self.engine.initialize(true); //初始化
+
+                        },
+                        error: function(data) {
+                            self.alert = {
+                                close: true,
+                                type: 'danger',
+                                message: JSON.stringify(data)
+                            }
+                            self.loading.out();
+                        }
+                    });
+                },
+                getActivityFiguresList: function(process) {
+                    var self = this;
+                    self.loading.in();
+                    $.ajax({
+                        url: "http://readingkid.us-east-2.elasticbeanstalk.com/getActivityFiguresList",
+                        // url: "http://127.0.0.1:8099/getActivityFiguresList",
+                        method: 'post',
+                        dataType: 'json',
+                        context: 'application/json;charset=utf-8',
+                        success: function(data) {
+                            console.log(data)
+                            self.activityFigures = data;
+                            self.getActivityList();
 
                         },
                         error: function(data) {
@@ -417,27 +464,40 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                         dataType: 'json',
                         context: 'application/json;charset=utf-8',
                         success: function(data) {
+                            self.loading.out();
+
                             console.log(data)
-                            self.activitylist = data;
-                            // self.booklistComplete = data;
-                            // self.raw_booklist = data;
-                            // var tmp = [];
-                            // // console.log(data)
-                            // _.each(data, function(v, k) {
-                            //     tmp.push(v['bookname'])
-                            // })
-                            // // console.log(tmp)
-                            // self.booklist = tmp;
-                            // if (process) {
-                            //     process(self.booklist);
-                            // }
-                            // self.loading.out();
-
-                            // var states = self.booklist;
-
-                            // self.engine.clear(); //清空一下初始数据
-                            // self.engine.local = data; //设置一下local
-                            // self.engine.initialize(true); //初始化
+                            console.log(_.findlastIndex)
+                            var data_fulltext = [];
+                            var activityFigures = self.activityFigures;
+                            _.each(data, function(item, index){
+                                var fulltext = '';
+                                _.each(item, function(i, k){
+                                     fulltext += i;
+                                })
+                                var index = '';
+                                var figures = [];
+                                while((index = _.findIndex(activityFigures, {
+                                    activity_id: item['id']
+                                })) != '-1') {
+                                    console.log(index)
+                                    // console.log(activityFigures.splice(index, 1))
+                                    figures.push(activityFigures.splice(index, 1));
+                                }
+                                
+                                data_fulltext.push(_.extend(item, {
+                                    fulltext: fulltext,
+                                    figures: _.flatten(figures)
+                                }))
+                            })
+                            self.activitylist = data_fulltext;
+                            self.activitylistComplete = data_fulltext;
+                            self.raw_activitylist = data_fulltext;
+                        
+                            console.log(data_fulltext)
+                            self.engineActivity.clear(); //清空一下初始数据
+                            self.engineActivity.local = data_fulltext; //设置一下local
+                            self.engineActivity.initialize(true); //初始化
 
                         },
                         error: function(data) {

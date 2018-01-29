@@ -22,7 +22,7 @@
 	<button type="button" data-toggle="modal" data-target="#myActivity">add activity</button>
 	<!-- activities 展示 START -->
 	<template v-if="activeTab.all || activeTab.activities">
-	<div class="row" v-for="activity in activitylist">
+	<div class="row" v-for="activity in activitylistComplete">
         <div class="panel panel-default">
             <!-- Default panel contents -->
             <div class="panel-heading">${activity.book_lidou}</div>
@@ -56,7 +56,9 @@
                     </tr>
                     <tr>
                         <td class="col-xs-10"  colspan="3">${activity.content}</td>
-                        <td class="col-xs-2"></td>
+                        <td class="col-xs-2">
+                        	<img v-for="img in activity.figures" :src="img? img.figure : ''" alt="">
+                        </td>
                     </tr>
                     <tr>
                         <td class="col-xs-2">延伸活动</td>

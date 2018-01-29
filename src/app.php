@@ -256,6 +256,7 @@ $app->post('/getBookList', function (Request $request) use ($app) {
             $msg = array2object($msg_ori);
             $payload[$key] =  array
            (
+                   'id' => $msg->id,
                    'message' => $msg->message,
                    'author' => $msg->author,
                    'bookname' => $msg->bookname,
@@ -300,7 +301,7 @@ $app->post('/getActivityFiguresList', function (Request $request) use ($app) {
 });
 
 $app->post('/getActivityList', function (Request $request) use ($app) {
-    $query = $app['db']->prepare("SELECT  {$app['db.table_activity']}.id as id,title, content,duration, extension_activity, assessment, {$app['db.table']}.bookcover as bookcover, {$app['db.table']}.bookname as book_lidou, {$app['db.table_areas_target']}.name as target, {$app['db.table_sub_areas']}.name as sub_name, {$app['db.table_major_areas']}.name as major_name from {$app['db.table_activity']} left join {$app['db.table']} on {$app['db.table_activity']}.book_lidou={$app['db.table']}.id left join {$app['db.table_areas_target']} on {$app['db.table_areas_target']}.area_target_id={$app['db.table_activity']}.target left join {$app['db.table_sub_areas']} on {$app['db.table_sub_areas']}.sub_area_id={$app['db.table_areas_target']}.related_sub_area_id left join {$app['db.table_major_areas']} on {$app['db.table_major_areas']}.area_id={$app['db.table_sub_areas']}.related_major_area_id");
+    $query = $app['db']->prepare("SELECT  {$app['db.table_activity']}.id as id,title, content,duration, extension_activity, assessment, {$app['db.table']}.bookcover as bookcover, {$app['db.table']}.id as book_lidou, {$app['db.table']}.bookname as book_lidou_name, {$app['db.table_areas_target']}.name as target_name, {$app['db.table_areas_target']}.area_target_id as target, {$app['db.table_sub_areas']}.name as sub_name, {$app['db.table_major_areas']}.name as major_name from {$app['db.table_activity']} left join {$app['db.table']} on {$app['db.table_activity']}.book_lidou={$app['db.table']}.id left join {$app['db.table_areas_target']} on {$app['db.table_areas_target']}.area_target_id={$app['db.table_activity']}.target left join {$app['db.table_sub_areas']} on {$app['db.table_sub_areas']}.sub_area_id={$app['db.table_areas_target']}.related_sub_area_id left join {$app['db.table_major_areas']} on {$app['db.table_major_areas']}.area_id={$app['db.table_sub_areas']}.related_major_area_id");
 
 
     $activities = $query->execute() ? $query->fetchAll(PDO::FETCH_ASSOC) : array();
@@ -319,7 +320,9 @@ $app->post('/getActivityList', function (Request $request) use ($app) {
                    'assessment' => $activity->assessment,
                    'bookcover' => $activity->bookcover,
                    'book_lidou' => $activity->book_lidou,
+                   'book_lidou_name' => $activity->book_lidou_name,
                    'target' => $activity->target,
+                   'target_name' => $activity->target_name,
                    'sub_name' => $activity->sub_name,
                    'major_name' => $activity->major_name,
                    'sql'=> $query

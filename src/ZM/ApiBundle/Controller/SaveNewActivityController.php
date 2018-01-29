@@ -88,7 +88,7 @@ class SaveNewActivityController extends Controller {
                                     $path = 'image/bookcover/';
                                     //获取上传文件后返回的文件名和扩展名
                                     $u = new BaseController();
-                                    $file_name = $u->uploadPic($title.$id, 'figure', $path);
+                                    $file_name = $u->uploadPic($title.time(), 'figure', $path);
 
                                     $sql2 = "INSERT INTO {$app['db.table_activity_figure']} (activity_id, figure) VALUES (:activity_id, :figure)";
 

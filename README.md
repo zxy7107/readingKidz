@@ -18,6 +18,9 @@ readingKidz
 http://readingkid.us-east-2.elasticbeanstalk.com/
 
 
+v1.1.3
+1. fix issue: activity展示时 book_lidou和target显示及更新错误
+
 v1.1.2
 1. 学习目标可选
 

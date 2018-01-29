@@ -110,7 +110,9 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                     content: '',
                     duration: '',
                     target: '',
+                    target_name: '',
                     book_lidou: '',
+                    book_lidou_name: '',
                     extension_activity: '',
                     assessment: ''
                 },
@@ -419,6 +421,35 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                                 }
                             }
                         });
+                    $('#searchWords_book_lidou').typeahead({
+                            hint: false,
+                            highlight: true,
+                            minLength: 0, //最小长度为0的时候就启用搜索
+                            classNames: {
+                                input: 'form-control',
+                                menu: 'cust-menu'
+                                // hint: 'Typeahead-hint',
+                                // selectable: 'Typeahead-selectable'
+                            }
+                        },
+                        {
+                            name: 'books',
+                            display: 'bookname',
+                            source: self.nflTeamsWithDefaults,
+                            limit: 1000,
+                            // templates: {
+                            //     // header: '<h3>books</h3>',
+                            //     suggestion: function() {
+                            //         return '<span></span>'
+                            //     }
+                            // }
+                        });
+
+                    $('#searchWords_book_lidou').bind('typeahead:select', function(ev, suggestion) {
+                        console.log(suggestion)
+                        console.log(self.newactivity)
+                        Vue.set(self.newactivity, 'book_lidou', suggestion.id);
+                    })
                     $('#searchWords').bind('typeahead:render', function(ev) {
                         var args = [];
                         Array.prototype.push.apply(args, arguments);

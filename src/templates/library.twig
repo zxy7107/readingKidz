@@ -26,7 +26,7 @@
         <div class="panel panel-default">
             <!-- Default panel contents -->
             <div class="panel-heading" style="position: relative;">
-            	${activity.book_lidou}
+            	${activity.book_lidou_name}
             	<button  type="button" class="btn btn-info" style="position:absolute;right:2%;    top: 50%;transform: translateY(-50%);" @click="updateActivityById(activity)">更新</button>
             </div>
             <!-- Table -->
@@ -51,7 +51,7 @@
                     </tr>
                     <tr>
                         <td class="col-xs-2">学习目标</td>
-                        <td class="col-xs-10" colspan="3">${activity.target}</td>
+                        <td class="col-xs-10" colspan="3">${activity.target_name}</td>
                     </tr>
                     <tr>
                         <td class="col-xs-10"  colspan="3">教学活动</td>
@@ -136,7 +136,10 @@
 							${target.target_name} - ${target.sub_name} - ${target.major_name}
 							</option>
 						</select>
-                        <div class="col-md-4"> book_lidou <input type="text" v-model="newactivity.book_lidou"></div>
+                        <div class="col-md-4"> book_lidou 
+
+						<input type="text" id="searchWords_book_lidou" name="searchWords_book_lidou" class="form-control" placeholder="请输入要搜索关键词" v-model="newactivity.book_lidou">
+                        </div>
                         <div class="col-md-4"> extension_activity <input type="text" v-model="newactivity.extension_activity"></div>
                     </div>
                     <div class="row">

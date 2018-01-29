@@ -101,6 +101,7 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                 },
                 activityFigures: [],
                 newactivity:{
+                    id: '',
                     title: '',
                     place: '',
                     figures: [],
@@ -186,58 +187,120 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                     })
                     Vue.set(self.activeTab, tab, true);
                 },
-                saveNewActivity: function(){
+                saveNewActivity: function(newactivity){
                     var self = this;
-                    console.log(self.newactivity)
+                    console.log(newactivity)
                     self.loading.in();
 
 
                     var formData = new FormData();
 
-                    formData.append("title", self.newactivity.title);
-                    formData.append("place", self.newactivity.place);
-                    formData.append("type", self.newactivity.type);
-                    formData.append("subtype", self.newactivity.subtype);
-                    formData.append("content", self.newactivity.content);
-                    formData.append("duration", self.newactivity.duration);
-                    formData.append("target", self.newactivity.target);
-                    formData.append("book_lidou", self.newactivity.book_lidou);
-                    formData.append("extension_activity", self.newactivity.extension_activity);
-                    formData.append("assessment", self.newactivity.assessment);
+                    formData.append("title", newactivity.title);
+                    formData.append("place", newactivity.place);
+                    formData.append("type", newactivity.type);
+                    formData.append("subtype", newactivity.subtype);
+                    formData.append("content", newactivity.content);
+                    formData.append("duration", newactivity.duration);
+                    formData.append("target", newactivity.target);
+                    formData.append("book_lidou", newactivity.book_lidou);
+                    formData.append("extension_activity", newactivity.extension_activity);
+                    formData.append("assessment", newactivity.assessment);
                     formData.append("figure", $('#figures1')[0].files[0]);
-
+                    if(newactivity.id) {
+                        formData.append("id", newactivity.id);
+                        self.postUpdateActivityAction(formData);
+                    } else {
+                        self.postSaveNewActivityAction(formData);
+                    }
+                    
+                },
+                postUpdateActivityAction: function(formData){
+                    var self = this;
                     $.ajax({
-                        url: "http://readingkid.us-east-2.elasticbeanstalk.com/api/saveNewActivityAction",
-                        // url: "http://127.0.0.1:8099/api/saveNewActivityAction",
-                        method: 'post',
-                        dataType: 'json',
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                        // context: 'application/json;charset=utf-8',
-                        success: function(data) {
-                            self.loading.out();
-                            if (data.code == 1) {
-                                self.alert = {
-                                    type: 'success',
-                                    message: data.resMessage + JSON.stringify(data.result)
+                            url: "http://readingkid.us-east-2.elasticbeanstalk.com/api/updateActivityAction",
+                            // url: "http://127.0.0.1:8099/api/updateActivityAction",
+                            method: 'post',
+                            dataType: 'json',
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            // context: 'application/json;charset=utf-8',
+                            success: function(data) {
+                                self.loading.out();
+                                if (data.code == 1) {
+                                    self.alert = {
+                                        type: 'success',
+                                        message: data.resMessage + JSON.stringify(data.result)
+                                    }
+                                    self.getActivityFiguresList();
+                                    $('#activityModal').modal('hide');
+                                } else {
+                                    self.alert = {
+                                        close: true,
+                                        message: data.resMessage
+                                    }
                                 }
-                            } else {
+                            },
+                            error: function(data) {
+                                self.loading.out();
                                 self.alert = {
                                     close: true,
-                                    message: data.resMessage
+                                    type: 'danger',
+                                    message: JSON.stringify(data)
                                 }
                             }
-                        },
-                        error: function(data) {
-                            self.loading.out();
-                            self.alert = {
-                                close: true,
-                                type: 'danger',
-                                message: JSON.stringify(data)
+                        });
+                },
+                postSaveNewActivityAction: function(formData){
+                    var self = this;
+                    $.ajax({
+                            url: "http://readingkid.us-east-2.elasticbeanstalk.com/api/saveNewActivityAction",
+                            // url: "http://127.0.0.1:8099/api/saveNewActivityAction",
+                            method: 'post',
+                            dataType: 'json',
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            // context: 'application/json;charset=utf-8',
+                            success: function(data) {
+                                self.loading.out();
+                                if (data.code == 1) {
+                                    self.alert = {
+                                        type: 'success',
+                                        message: data.resMessage + JSON.stringify(data.result)
+                                    }
+                                    self.getActivityFiguresList();
+                                    $('#activityModal').modal('hide');
+                                } else {
+                                    self.alert = {
+                                        close: true,
+                                        message: data.resMessage
+                                    }
+                                }
+                            },
+                            error: function(data) {
+                                self.loading.out();
+                                self.alert = {
+                                    close: true,
+                                    type: 'danger',
+                                    message: JSON.stringify(data)
+                                }
                             }
-                        }
-                    });
+                        });
+                },
+                updateActivityById: function(activity){
+                    var self = this;
+                    
+                    Vue.set(self.newactivity, 'id', activity.id);
+                    Vue.set(self.newactivity, 'title', activity.title);
+                    Vue.set(self.newactivity, 'content', activity.content);
+                    Vue.set(self.newactivity, 'duration', activity.duration);
+                    Vue.set(self.newactivity, 'target', activity.target);
+                    Vue.set(self.newactivity, 'book_lidou', activity.book_lidou);
+                    Vue.set(self.newactivity, 'extension_activity', activity.extension_activity);
+                    Vue.set(self.newactivity, 'assessment', activity.assessment);
+                    $('#activityModal').modal('show');
+
                 },
                 savechanges: function(){
                     var self = this;
@@ -319,6 +382,8 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                         if(!_.isEmpty(rest)) {
                             if(_.has(rest[0], 'extension_activity')) {
                                 self.activitylistComplete = rest;
+                                console.log('====')
+                                console.log(self.activitylistComplete)
                             }
                             if(_.has(rest[0], 'bookname')) {
                                 self.booklistComplete = rest;

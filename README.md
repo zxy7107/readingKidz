@@ -18,6 +18,9 @@ readingKidz
 http://readingkid.us-east-2.elasticbeanstalk.com/
 
 
+v1.1.1
+1. 更新活动(含上传图片)
+
 v1.1.0
 1. 新增活动功能(含上传图片)
 2. 按tab 展示 books & activities

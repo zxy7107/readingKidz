@@ -18,6 +18,9 @@ readingKidz
 http://readingkid.us-east-2.elasticbeanstalk.com/
 
 
+v1.1.2
+1. 学习目标可选
+
 v1.1.1
 1. 更新活动(含上传图片)
 

@@ -333,6 +333,33 @@ $app->post('/getActivityList', function (Request $request) use ($app) {
     return $res;
 });
 
+$app->post('/getTargetList', function (Request $request) use ($app) {
+    $query = $app['db']->prepare("SELECT  {$app['db.table_sub_areas']}.name as sub_name, {$app['db.table_major_areas']}.name as major_name, {$app['db.table_areas_target']}.name as target_name, {$app['db.table_areas_target']}.area_target_id as area_target_id from {$app['db.table_sub_areas']} left join {$app['db.table_major_areas']} on {$app['db.table_sub_areas']}.related_major_area_id={$app['db.table_major_areas']}.area_id left join {$app['db.table_areas_target']} on {$app['db.table_sub_areas']}.sub_area_id={$app['db.table_areas_target']}.related_sub_area_id;");
+
+
+    $targets = $query->execute() ? $query->fetchAll(PDO::FETCH_ASSOC) : array();
+
+    $payload = array();
+
+    foreach ($targets as $key => $array_targets){
+            $target = array2object($array_targets);
+            $payload[$key] =  array
+           (
+                   'area_target_id' => $target->area_target_id,
+                   'sub_name' => $target->sub_name,
+                   'major_name' => $target->major_name,
+                   'target_name' => $target->target_name,
+                   'sql'=> $query
+           );
+
+    }
+    // var_export($payload);
+    // sort($payload);  
+    // $res = json_encode($payload, JSON_UNESCAPED_SLASHES);  
+    $res = json_encode($payload, true);  
+    return $res;
+});
+
 //二维数组排序
 function multi_array_sort($arr,$key,$type=SORT_REGULAR,$short=SORT_DESC){
   foreach ($arr as $k => $v){

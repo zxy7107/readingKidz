@@ -19,7 +19,7 @@
     <alert v-if="a.message" :type="a.type" :close="a.close" @close="closeAlert">${a.message}<span slot="foo">&times;</span></alert>
 
 	<!-- 活动 START -->
-	<button type="button" data-toggle="modal" data-target="#activityModal">add activity</button>
+	<button type="button" data-toggle="modal" @click="addActivity">add activity</button>
 	<!-- activities 展示 START -->
 	<template v-if="activeTab.all || activeTab.activities">
 	<div class="row" v-for="activity in activitylistComplete">
@@ -130,7 +130,12 @@
                         <div class="col-md-4">duration  <input type="text" v-model="newactivity.duration"></div>
                     </div>
                     <div class="row">
-                        <div class="col-md-4"> target <input type="text" v-model="newactivity.target"></div>
+                        <div class="col-md-4"> target 
+						<select name="" id="" v-model="newactivity.target">
+							<option :value="target.area_target_id" v-for="(target,k1) in targetList">
+							${target.target_name} - ${target.sub_name} - ${target.major_name}
+							</option>
+						</select>
                         <div class="col-md-4"> book_lidou <input type="text" v-model="newactivity.book_lidou"></div>
                         <div class="col-md-4"> extension_activity <input type="text" v-model="newactivity.extension_activity"></div>
                     </div>

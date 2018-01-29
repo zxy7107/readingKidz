@@ -113,7 +113,8 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                     book_lidou: '',
                     extension_activity: '',
                     assessment: ''
-                }
+                },
+                targetList: []
             },
             computed: {
                 newbook: function(){
@@ -176,6 +177,7 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                 var self = this;
                 self.getActivityFiguresList();
                 self.getBookList();
+                self.getTargetList();
                 self.bindTypeahead();
             },
             methods: {
@@ -213,6 +215,36 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                         self.postSaveNewActivityAction(formData);
                     }
                     
+                },
+                getTargetList: function(){
+                    var self = this;
+                    self.loading.in();
+                    $.ajax({
+                        url: "http://readingkid.us-east-2.elasticbeanstalk.com/getTargetList",
+                        // url: "http://127.0.0.1:8099/getTargetList",
+                        method: 'post',
+                        dataType: 'json',
+                        context: 'application/json;charset=utf-8',
+                        success: function(data) {
+                            console.log(data)
+                            // var majors = _.groupBy(data, 'major_name');
+                            // var tmp = [];
+                            // _.each(majors, function(major){
+                            //     tmp.push(_.groupBy(major, 'sub_name'));
+                            // })
+                            // console.log(_.flatten(tmp))
+                            self.targetList = data;
+
+                        },
+                        error: function(data) {
+                            self.alert = {
+                                close: true,
+                                type: 'danger',
+                                message: JSON.stringify(data)
+                            }
+                            self.loading.out();
+                        }
+                    });
                 },
                 postUpdateActivityAction: function(formData){
                     var self = this;
@@ -287,6 +319,19 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                                 }
                             }
                         });
+                },
+                addActivity: function(){
+                    var self = this;
+                    
+                    Vue.set(self.newactivity, 'id','');
+                    Vue.set(self.newactivity, 'title','');
+                    Vue.set(self.newactivity, 'content','');
+                    Vue.set(self.newactivity, 'duration','');
+                    Vue.set(self.newactivity, 'target','');
+                    Vue.set(self.newactivity, 'book_lidou','');
+                    Vue.set(self.newactivity, 'extension_activity','');
+                    Vue.set(self.newactivity, 'assessment','');
+                    $('#activityModal').modal('show');
                 },
                 updateActivityById: function(activity){
                     var self = this;

@@ -8,4 +8,7 @@
   define('DB_TABLE_PUNCH', 't_punch_records');
   define('DB_TABLE_ACTIVITY', 't_activities');
   define('DB_TABLE_ACTIVITY_FIGURE', 't_activities_figure');
+  define('DB_TABLE_AREAS_TARGET', 't_areas_target');
+  define('DB_TABLE_MAJOR_AREAS', 't_major_areas');
+  define('DB_TABLE_SUB_AREAS', 't_sub_areas');
 ?>

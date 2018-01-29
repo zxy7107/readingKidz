@@ -23,6 +23,9 @@ $app['db.table'] = DB_TABLE;
 $app['db.table_punch'] = DB_TABLE_PUNCH;
 $app['db.table_activity'] = DB_TABLE_ACTIVITY;
 $app['db.table_activity_figure'] = DB_TABLE_ACTIVITY_FIGURE;
+$app['db.table_areas_target'] = DB_TABLE_AREAS_TARGET;
+$app['db.table_major_areas'] = DB_TABLE_MAJOR_AREAS;
+$app['db.table_sub_areas'] = DB_TABLE_SUB_AREAS;
 $app['db.dsn'] = 'mysql:dbname=' . DB_NAME . ';host=' . DB_HOST;
 // $app['db'] = $app->share(function ($app) {
 //     return new PDO($app['db.dsn'], DB_USER, DB_PASSWORD);
@@ -151,7 +154,7 @@ $app->match('/library', function (Request $request) use ($app) {
     
 
     return $app['twig']->render('library.twig', array(
-        'title' => 'Book Library',
+        'title' => '',
         'alert' => '',
         'tab' => 'library'
     ));
@@ -264,6 +267,39 @@ $app->post('/getBookList', function (Request $request) use ($app) {
                    'language' => $msg->language,
                    'users' => $msg->users,
                    'bookcover' => $msg->bookcover,
+           );
+
+    }
+    // var_export($payload);
+    // sort($payload);  
+    // $res = json_encode($payload, JSON_UNESCAPED_SLASHES);  
+    $res = json_encode($payload, true);  
+    return $res;
+});
+
+$app->post('/getActivityList', function (Request $request) use ($app) {
+    $query = $app['db']->prepare("SELECT  title, content,duration, extension_activity, assessment, {$app['db.table']}.bookcover as bookcover, {$app['db.table']}.bookname as book_lidou, {$app['db.table_areas_target']}.name as target, {$app['db.table_sub_areas']}.name as sub_name, {$app['db.table_major_areas']}.name as major_name from {$app['db.table_activity']} left join {$app['db.table']} on {$app['db.table_activity']}.book_lidou={$app['db.table']}.id left join {$app['db.table_areas_target']} on {$app['db.table_areas_target']}.area_target_id={$app['db.table_activity']}.target left join {$app['db.table_sub_areas']} on {$app['db.table_sub_areas']}.sub_area_id={$app['db.table_areas_target']}.related_sub_area_id left join {$app['db.table_major_areas']} on {$app['db.table_major_areas']}.area_id={$app['db.table_sub_areas']}.related_major_area_id");
+
+
+    $activities = $query->execute() ? $query->fetchAll(PDO::FETCH_ASSOC) : array();
+
+    $payload = array();
+
+    foreach ($activities as $key => $array_activity){
+            $activity = array2object($array_activity);
+            $payload[$key] =  array
+           (
+                   'title' => $activity->title,
+                   'content' => $activity->content,
+                   'duration' => $activity->duration,
+                   'extension_activity' => $activity->extension_activity,
+                   'assessment' => $activity->assessment,
+                   'bookcover' => $activity->bookcover,
+                   'book_lidou' => $activity->book_lidou,
+                   'target' => $activity->target,
+                   'sub_name' => $activity->sub_name,
+                   'major_name' => $activity->major_name,
+                   'sql'=> $query
            );
 
     }

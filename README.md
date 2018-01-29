@@ -18,6 +18,10 @@ readingKidz
 http://readingkid.us-east-2.elasticbeanstalk.com/
 
 
+v1.1.0
+1. 新增活动功能(含上传图片)
+2. 按tab 展示 books & activities
+
 v1.0.5
 1. book library模糊匹配改用jQuery Typeahead.js
 
@@ -53,9 +57,10 @@ apache配置文件：/private/etc/apache2/httpd.conf
 http://127.0.0.1:8099/
 
 -------------------------------------------------------------------------------------
+http://readingkid.us-east-2.elasticbeanstalk.com/punchview
+http://127.0.0.1:8099/
+http://10.32.80.152:8099/
 
-http://127.0.0.1:8099/mixmatch/pages/index.html
-http://10.32.80.152:8099/mixmatch/pages/index.html
 
 cd D:/Users/zhangxy/Documents/Learning/www/Apache24/bin
 httpd -k restart -n "ApacheServer"

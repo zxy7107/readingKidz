@@ -29,12 +29,17 @@ class SaveNewActivityController extends Controller {
             $type = $request->get('type');
             $subtype = $request->get('subtype');
             $content = $request->get('content');
+            $duration = $request->get('duration');
+            $target = $request->get('target');
+            $book_lidou = $request->get('book_lidou');
+            $extension_activity = $request->get('extension_activity');
+            $assessment = $request->get('assessment');
 
 
             // $query1 = $app['db']->prepare("SELECT id FROM {$app['db.table']} WHERE bookname='{$bookname}'");
             // $book = $query1->execute() ? $query1->fetchAll() : array();
       
-                        $sql = "INSERT INTO {$app['db.table_activity']} (title, place, type, subtype, content) VALUES (:title, :place, :type, :subtype, :content)";
+                        $sql = "INSERT INTO {$app['db.table_activity']} (title, place, type, subtype, content, duration, target, book_lidou, extension_activity, assessment) VALUES (:title, :place, :type, :subtype, :content, :duration, :target, :book_lidou, :extension_activity, :assessment)";
 
                         $query = $app['db']->prepare($sql);
                         $data = array(
@@ -42,7 +47,12 @@ class SaveNewActivityController extends Controller {
                             ':place' => $place,
                             ':type' => $type,
                             ':subtype' => $subtype,
-                            ':content' => $content
+                            ':content' => $content,
+                            ':duration' => $duration,
+                            ':target' => $target,
+                            ':book_lidou' => $book_lidou,
+                            ':extension_activity' => $extension_activity,
+                            ':assessment' => $assessment
                         );
                         if (!$query->execute($data)) {
                             $result['code'] = 9;
@@ -57,6 +67,11 @@ class SaveNewActivityController extends Controller {
                             'type' => $type,
                             'subtype' => $subtype,
                             'content' => $content,
+                            'duration' => $duration,
+                            'target' => $target,
+                            'book_lidou' => $book_lidou,
+                            'extension_activity' => $extension_activity,
+                            'assessment' => $assessment,
                             'sql' => $sql,
                             'id' => $id
                             );

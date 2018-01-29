@@ -1,5 +1,8 @@
 {% include 'header.twig' %}
 <div id="library-app">
+	<ul class="nav nav-tabs" >
+	  <li role="presentation" :class="activeTab[tab] ? 'active' : ''" v-for="tab in tabs" @click="switchTab(tab)"><a href="#">${tab}</a></li>
+	</ul>
     <div class="row">
         <div class="col-lg-12">
             <div class="input-group">
@@ -12,7 +15,62 @@
         </div>
         <!-- /.col-lg-6 -->
     </div>
-    <button type="button" data-toggle="modal" data-target="#myModal">add book</button>
+    <loading v-if="changer"></loading>
+    <alert v-if="a.message" :type="a.type" :close="a.close" @close="closeAlert">${a.message}<span slot="foo">&times;</span></alert>
+
+	<!-- 活动 START -->
+	<button type="button" data-toggle="modal" data-target="#myActivity">add activity</button>
+	<!-- activities 展示 START -->
+	<template v-if="activeTab.all || activeTab.activities">
+	<div class="row" v-for="activity in activitylist">
+        <div class="panel panel-default">
+            <!-- Default panel contents -->
+            <div class="panel-heading">${activity.book_lidou}</div>
+            <!-- Table -->
+            <table class="table table-hover table-bordered">
+                <thead>
+                    <tr>
+                       <!--  <th class="col-xs-4"></th>
+                        <th class="col-xs-6"></th>
+                        <th class="col-xs-2"></th> -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="col-xs-2">活动名称</td>
+                        <td class="col-xs-4">${activity.title}</td>
+                        <td class="col-xs-2">教学时间</td>
+                        <td class="col-xs-4">${activity.duration}</td>
+                    </tr>
+                    <tr>
+                        <td class="col-xs-2">学习发展指南</td>
+                        <td class="col-xs-10" colspan="3">${activity.major_name}  ${activity.sub_name}</td>
+                    </tr>
+                    <tr>
+                        <td class="col-xs-2">学习目标</td>
+                        <td class="col-xs-10" colspan="3">${activity.target}</td>
+                    </tr>
+                    <tr>
+                        <td class="col-xs-10"  colspan="3">教学活动</td>
+                        <td class="col-xs-2">教学资源</td>
+                    </tr>
+                    <tr>
+                        <td class="col-xs-10"  colspan="3">${activity.content}</td>
+                        <td class="col-xs-2"></td>
+                    </tr>
+                    <tr>
+                        <td class="col-xs-2">延伸活动</td>
+                        <td class="col-xs-10" colspan="3">${activity.extension_activity}</td>
+                    </tr>
+                    <tr>
+                        <td class="col-xs-2">学习评量</td>
+                        <td class="col-xs-10" colspan="3">${activity.assessment}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+	<!-- activities 展示 END -->
     <div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -46,7 +104,7 @@
         </div>
         <!-- /.modal-dialog -->
     </div>
-    <button type="button" data-toggle="modal" data-target="#myActivity">add activity</button>
+    
     <div id="myActivity" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -64,19 +122,22 @@
                     <div class="row">
                         <div class="col-md-4">subtype  <input type="text" v-model="newactivity.subtype"></div>
                         <div class="col-md-4">content  <input type="text" v-model="newactivity.content"></div>
-                        <div class="col-md-4"></div>
-                       
+                        <div class="col-md-4">duration  <input type="text" v-model="newactivity.duration"></div>
                     </div>
                     <div class="row">
-                         <div class="col-md-4">figures1  
+                        <div class="col-md-4"> target <input type="text" v-model="newactivity.target"></div>
+                        <div class="col-md-4"> book_lidou <input type="text" v-model="newactivity.book_lidou"></div>
+                        <div class="col-md-4"> extension_activity <input type="text" v-model="newactivity.extension_activity"></div>
+                    </div>
+                    <div class="row">
+                    	<div class="col-md-4"> assessment <input type="text" v-model="newactivity.assessment"></div>
+                        <div class="col-md-4">figures1  
                             <input id="figures1" type="file" value="" name="figures1" >
                         </div>
                         <div class="col-md-4">figures2  
                             <input id="figures2" type="file" value="" name="figures2" >
                         </div>
-                        <div class="col-md-4">figures3  
-                            <input id="figures3" type="file" value="" name="figures3" >
-                        </div>
+                        
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -89,13 +150,18 @@
         <!-- /.modal-dialog -->
     </div>
     <!-- /.row -->
-    <loading v-if="changer"></loading>
-    <alert v-if="a.message" :type="a.type" :close="a.close" @close="closeAlert">${a.message}<span slot="foo">&times;</span></alert>
+	</template>
+	<!-- 活动END -->
+
+
+	<!-- BOOKS START -->
+	<template v-if="activeTab.all || activeTab.books">
+    <button type="button" data-toggle="modal" data-target="#myModal">add book</button>
     <textarea type="text" v-model="keyword"></textarea>
     <input id="photo" type="file" style="width:200px" value="" name="photo">
     <!-- <img :src="sku.photo"> -->
     <button class="ui button orange " @click="uploadimg">上传图片</button>
-    <div class="row">
+    <div class="row" >
         <div class="panel panel-default">
             <!-- Default panel contents -->
             <div class="panel-heading">Books</div>
@@ -118,20 +184,9 @@
             </table>
         </div>
     </div>
-    
-    <!-- /.modal -->
-    <!--     <div class="row" v-for="(book, index) in booklistComplete">
-        <div class="col-xs-5 col-sm-7 col-md-8">
-            <h5>${book.bookname}</h5>
-        </div>
-        <div class="col-xs-4 col-sm-3 col-md-2" style="padding:0;">
-            <img :src="book.bookcover ? 'http://tutorials-hpdnn-env.us-east-2.elasticbeanstalk.com/'+ book.bookcover : ''" alt="" style="width:100%;">
-        </div>
-        <div class="col-xs-3 col-sm-2 col-md-2">
-            <button type="button" class="btn btn-default" @click="postPunch(index)">打卡</button>
-        </div>
-    </div> -->
-    <!-- /.row -->
+    </template>
+	<!-- BOOKS END -->
+
     {% include 'footer.twig' %}
     <script src="assets/js/controller/library.js"></script>
     </body>

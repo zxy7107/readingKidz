@@ -27,3 +27,130 @@ CREATE TABLE
   `figure` VARCHAR(200) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '''',  
   `datachange_createtime` TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP,   
   `datachange_lasttime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+
+DROP TABLE IF EXISTS `awsdatabase`.`t_major_areas`;
+
+
+CREATE TABLE 
+  `awsdatabase`.`t_major_areas` (
+  `area_id` int(11) NOT NULL,   
+  `name` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+  `datachange_createtime` TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP,   
+  `datachange_lasttime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  PRIMARY KEY (`area_id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+INSERT INTO `awsdatabase`.`t_major_areas` (`area_id`,`name`) VALUES
+("1", "健康"),
+("2", "语言"),
+("3", "社会"),
+("4", "科学"),
+("5", "艺术");
+
+ALTER TABLE `awsdatabase`.`t_major_areas` 
+ADD COLUMN `notes` VARCHAR(200) NOT NULL DEFAULT '' AFTER `datachange_lasttime`;
+
+UPDATE `awsdatabase`.`t_major_areas` SET `notes`='身体、心理和社会适应' WHERE `area_id`='1';
+UPDATE `awsdatabase`.`t_major_areas` SET `notes`='交流和思维的工具' WHERE `area_id`='2';
+UPDATE `awsdatabase`.`t_major_areas` SET `notes`='适应社会生活的能力' WHERE `area_id`='3';
+UPDATE `awsdatabase`.`t_major_areas` SET `notes`='激发探究兴趣，体验探究过程，发展初步的探究能力' WHERE `area_id`='4';
+UPDATE `awsdatabase`.`t_major_areas` SET `notes`='感受美、表现美和创造美' WHERE `area_id`='5';
+
+
+
+
+
+DROP TABLE IF EXISTS `awsdatabase`.`t_sub_areas`;
+
+CREATE TABLE 
+  `awsdatabase`.`t_sub_areas` (
+  `sub_area_id` int(11) NOT NULL,   
+  `related_major_area_id` int(11) NOT NULL,   
+  `name` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+  `datachange_createtime` TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP,   
+  `datachange_lasttime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  PRIMARY KEY (`sub_area_id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+INSERT INTO `awsdatabase`.`t_sub_areas` (`related_major_area_id`,`name`,`sub_area_id`) VALUES
+("1", "身体状况", "1"),
+("1", "动作发展", "2"),
+("1", "生活习惯与生活能力", "3"),
+("2", "倾听与表达", "4"),
+("2", "阅读与书写准备", "5"),
+("3", "人际交往", "6"),
+("3", "社会适应", "7"),
+("4", "科学探究", "8"),
+("4", "数学认知", "9"),
+("5", "感受与欣赏", "10"),
+("5", "表现与创造", "11");
+
+
+
+
+
+DROP TABLE IF EXISTS `awsdatabase`.`t_areas_target`;
+
+CREATE TABLE 
+  `awsdatabase`.`t_areas_target` (
+  `area_target_id` int(11) NOT NULL,   
+  `related_sub_area_id` int(11) NOT NULL,   
+  `name` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+  `datachange_createtime` TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP,   
+  `datachange_lasttime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  PRIMARY KEY (`area_target_id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+INSERT INTO `awsdatabase`.`t_areas_target` (`related_sub_area_id`,`name`,`area_target_id`) VALUES
+("1", "具有健康的体态", "1"),
+("1", "情绪安定愉快", "2"),
+("1", "具有一定的适应能力", "3"),
+("2", "具有一定搞得平衡力，动作协调、灵敏", "4"),
+("2", "具有一定的力量和耐力", "5"),
+("2", "手的动作灵活协调", "6"),
+("3", "具有良好的生活与卫生习惯", "7"),
+("3", "具备基本的安全知识和自我保护能力", "8"),
+("4", "认真听并能听懂常用语言", "9"),
+("4", "愿意讲话并能清楚的表达", "10"),
+("4", "具有文明的语言习惯", "11"),
+("5", "喜欢听故事，看图书", "12"),
+("5", "具有初步的阅读理解能力", "13"),
+("5", "具有书面表达的愿望和初步技能", "14"),
+("6", "愿意与人交往", "15"),
+("6", "能与同伴友好相处", "16"),
+("6", "具有自尊、自信、自主的表现", "17"),
+("6", "关心尊重他人", "18"),
+("7", "喜欢并适应群体生活", "19"),
+("7", "遵守基本的行为规范", "20"),
+("7", "具有初步的归属感", "21"),
+("8", "接近自然，喜欢探究", "22"),
+("8", "具有初步的探究能力", "23"),
+("8", "在探究中认识周遭事物和现象", "24"),
+("9", "初步感知生活中数学的有用和有趣", "25"),
+("9", "感知和理解数、量及数量关系", "26"),
+("9", "感知形状与空间关系", "27"),
+("10", "喜欢自然界与生活中美的事物", "28"),
+("10", "喜欢欣赏多种多样的艺术形式和作品", "29"),
+("11", "喜欢进行艺术说动与大胆表现", "30"),
+("11", "具有初步的艺术表现与创造能力", "31");
+
+
+
+Select  t_sub_areas.name as sub_name, t_major_areas.name as major_name, t_areas_target.name as target_name, t_areas_target.area_target_id as area_target_id from t_sub_areas  
+left join t_major_areas on t_sub_areas.related_major_area_id=t_major_areas.area_id
+left join t_areas_target on t_sub_areas.sub_area_id=t_areas_target.related_sub_area_id;
+
+
+
+Select  *, t_activities_figure.figure as figures from t_activities  
+left join t_activities_figure on t_activities.id=t_activities_figure.activity_id;
+
+
+Select  *, t_books.bookname as book_lidou from t_activities  
+left join t_books on t_activities.book_lidou=t_books.id;
+
+
+//获取getActivityList
+Select  title, content,duration, extension_activity, assessment, t_books.bookcover as bookcover, t_books.bookname as book_lidou, t_areas_target.name as target, t_sub_areas.name as sub_name, t_major_areas.name as major_name
+from t_activities  
+left join t_books on t_activities.book_lidou=t_books.id
+left join t_areas_target on t_areas_target.area_target_id=t_activities.target
+left join t_sub_areas on t_sub_areas.sub_area_id=t_areas_target.related_sub_area_id
+left join t_major_areas on t_major_areas.area_id=t_sub_areas.related_major_area_id;

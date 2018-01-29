@@ -91,13 +91,24 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                 booklist: [],
                 booklistComplete: [],
                 raw_booklist: [],
+                activitylist: [],
+                activeTab:{
+                    all: true,
+                    books: false,
+                    activities: false
+                },
                 newactivity:{
                     title: '',
                     place: '',
                     figures: [],
                     type: '',
                     subtype: '',
-                    content: ''
+                    content: '',
+                    duration: '',
+                    target: '',
+                    book_lidou: '',
+                    extension_activity: '',
+                    assessment: ''
                 }
             },
             computed: {
@@ -109,6 +120,10 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                     })
                     console.log(obj)
                     return obj;
+                },
+                tabs:function(){
+                    var self = this;
+                    return _.keys(self.activeTab);
                 },
                 a: function() {
                     var self = this;
@@ -144,10 +159,19 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
             },
             mounted: function() {
                 var self = this;
+                self.getActivityList();
                 self.getBookList();
                 self.bindTypeahead();
             },
             methods: {
+                switchTab: function(tab){
+                    var self = this;
+                    console.log(tab)
+                    _.each(self.activeTab, function(tab, index){
+                        self.activeTab[index] = false;
+                    })
+                    Vue.set(self.activeTab, tab, true);
+                },
                 saveNewActivity: function(){
                     var self = this;
                     console.log(self.newactivity)
@@ -156,17 +180,21 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
 
                     var formData = new FormData();
 
-
                     formData.append("title", self.newactivity.title);
                     formData.append("place", self.newactivity.place);
                     formData.append("type", self.newactivity.type);
                     formData.append("subtype", self.newactivity.subtype);
                     formData.append("content", self.newactivity.content);
+                    formData.append("duration", self.newactivity.duration);
+                    formData.append("target", self.newactivity.target);
+                    formData.append("book_lidou", self.newactivity.book_lidou);
+                    formData.append("extension_activity", self.newactivity.extension_activity);
+                    formData.append("assessment", self.newactivity.assessment);
                     formData.append("figure", $('#figures1')[0].files[0]);
 
                     $.ajax({
-                        // url: "http://readingkid.us-east-2.elasticbeanstalk.com/api/saveNewActivityAction",
-                        url: "http://127.0.0.1:8099/api/saveNewActivityAction",
+                        url: "http://readingkid.us-east-2.elasticbeanstalk.com/api/saveNewActivityAction",
+                        // url: "http://127.0.0.1:8099/api/saveNewActivityAction",
                         method: 'post',
                         dataType: 'json',
                         data: formData,
@@ -202,8 +230,8 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                     console.log(self.newbook)
                     self.loading.in();
                     $.ajax({
-                        // url: "http://readingkid.us-east-2.elasticbeanstalk.com/api/saveNewBookAction",
-                        url: "http://127.0.0.1:8099/api/saveNewBookAction",
+                        url: "http://readingkid.us-east-2.elasticbeanstalk.com/api/saveNewBookAction",
+                        // url: "http://127.0.0.1:8099/api/saveNewBookAction",
                         method: 'post',
                         dataType: 'json',
                         data: self.newbook,
@@ -288,8 +316,8 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                     self.loading.in();
                     $.ajax({
                         method: "POST",
-                        // url: "http://readingkid.us-east-2.elasticbeanstalk.com/api/uploadBookcoverAction",
-                        url: "http://127.0.0.1:8099/api/uploadBookcoverAction",
+                        url: "http://readingkid.us-east-2.elasticbeanstalk.com/api/uploadBookcoverAction",
+                        // url: "http://127.0.0.1:8099/api/uploadBookcoverAction",
                         data: formData,
                         processData: false,
                         contentType: false
@@ -329,8 +357,8 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                     var self = this;
                     self.loading.in();
                     $.ajax({
-                        // url: "http://readingkid.us-east-2.elasticbeanstalk.com/getBookList",
-                        url: "http://127.0.0.1:8099/getBookList",
+                        url: "http://readingkid.us-east-2.elasticbeanstalk.com/getBookList",
+                        // url: "http://127.0.0.1:8099/getBookList",
                         method: 'post',
                         dataType: 'json',
                         context: 'application/json;charset=utf-8',
@@ -379,6 +407,49 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                         }
                     });
                 },
+                getActivityList: function() {
+                    var self = this;
+                    self.loading.in();
+                    $.ajax({
+                        url: "http://readingkid.us-east-2.elasticbeanstalk.com/getActivityList",
+                        // url: "http://127.0.0.1:8099/getActivityList",
+                        method: 'post',
+                        dataType: 'json',
+                        context: 'application/json;charset=utf-8',
+                        success: function(data) {
+                            console.log(data)
+                            self.activitylist = data;
+                            // self.booklistComplete = data;
+                            // self.raw_booklist = data;
+                            // var tmp = [];
+                            // // console.log(data)
+                            // _.each(data, function(v, k) {
+                            //     tmp.push(v['bookname'])
+                            // })
+                            // // console.log(tmp)
+                            // self.booklist = tmp;
+                            // if (process) {
+                            //     process(self.booklist);
+                            // }
+                            // self.loading.out();
+
+                            // var states = self.booklist;
+
+                            // self.engine.clear(); //清空一下初始数据
+                            // self.engine.local = data; //设置一下local
+                            // self.engine.initialize(true); //初始化
+
+                        },
+                        error: function(data) {
+                            self.alert = {
+                                close: true,
+                                type: 'danger',
+                                message: JSON.stringify(data)
+                            }
+                            self.loading.out();
+                        }
+                    });
+                },
                 closeAlert: function() {
                     var self = this;
                     self.alert = {
@@ -404,8 +475,8 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                         }
                         self.loading.in();
                         $.ajax({
-                            // url: "http://readingkid.us-east-2.elasticbeanstalk.com/punch",
-                            url: "http://127.0.0.1:8099/punch",
+                            url: "http://readingkid.us-east-2.elasticbeanstalk.com/punch",
+                            // url: "http://127.0.0.1:8099/punch",
                             method: 'post',
                             dataType: 'json',
                             data: {

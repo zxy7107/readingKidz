@@ -11,4 +11,5 @@
   define('DB_TABLE_AREAS_TARGET', 't_areas_target');
   define('DB_TABLE_MAJOR_AREAS', 't_major_areas');
   define('DB_TABLE_SUB_AREAS', 't_sub_areas');
+  define('DB_TABLE_BOOK_SERIES', 't_book_series');
 ?>

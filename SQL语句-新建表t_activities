@@ -10,8 +10,13 @@ CREATE TABLE
   `type` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',   
   `subtype` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',   
   `content` VARCHAR(1000) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',  
+  `extension_activity` VARCHAR(1000) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',  
+  `assessment` VARCHAR(1000) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',  
   `datachange_createtime` TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP,   
   `datachange_lasttime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
 
 
 
@@ -154,3 +159,21 @@ left join t_books on t_activities.book_lidou=t_books.id
 left join t_areas_target on t_areas_target.area_target_id=t_activities.target
 left join t_sub_areas on t_sub_areas.sub_area_id=t_areas_target.related_sub_area_id
 left join t_major_areas on t_major_areas.area_id=t_sub_areas.related_major_area_id;
+
+
+
+
+
+DROP TABLE IF EXISTS `awsdatabase`.`t_book_series`;
+
+CREATE TABLE 
+  `awsdatabase`.`t_book_series` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,   
+  `name` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+  `datachange_createtime` TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP,   
+  `datachange_lasttime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+INSERT INTO `awsdatabase`.`t_book_series` (`name`) VALUES
+("初级-生活常识系列"),
+("安东尼绘本12册")
+;

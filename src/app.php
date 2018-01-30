@@ -26,6 +26,7 @@ $app['db.table_activity_figure'] = DB_TABLE_ACTIVITY_FIGURE;
 $app['db.table_areas_target'] = DB_TABLE_AREAS_TARGET;
 $app['db.table_major_areas'] = DB_TABLE_MAJOR_AREAS;
 $app['db.table_sub_areas'] = DB_TABLE_SUB_AREAS;
+$app['db.table_book_series'] = DB_TABLE_BOOK_SERIES;
 $app['db.dsn'] = 'mysql:dbname=' . DB_NAME . ';host=' . DB_HOST;
 // $app['db'] = $app->share(function ($app) {
 //     return new PDO($app['db.dsn'], DB_USER, DB_PASSWORD);

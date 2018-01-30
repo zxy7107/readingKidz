@@ -1,0 +1,52 @@
+<div>
+    共有${activitylistcomplete.length}条记录
+  <div class="row" v-for="(activity, index) in activitylistcomplete" :key="index">
+    <div class="panel panel-default">
+        <div class="panel-heading" style="position: relative;">
+            ${activity.book_lidou_name}
+            <button type="button" class="btn btn-info" style="position:absolute;right:2%;    top: 50%;transform: translateY(-50%);" @click="cemitter(activity)">更新</button>
+        </div>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-xs-2">活动名称 ${activity.id}</td>
+                    <td class="col-xs-4">${activity.title}</td>
+                    <td class="col-xs-2">教学时间</td>
+                    <td class="col-xs-4">${activity.duration}</td>
+                </tr>
+                <tr>
+                    <td class="col-xs-2">学习发展指南</td>
+                    <td class="col-xs-10" colspan="3">${activity.major_name} ${activity.sub_name}</td>
+                </tr>
+                <tr>
+                    <td class="col-xs-2">学习目标</td>
+                    <td class="col-xs-10" colspan="3">${activity.target_name}</td>
+                </tr>
+                <tr>
+                    <td class="col-xs-10" colspan="3">教学活动</td>
+                    <td class="col-xs-2">教学资源</td>
+                </tr>
+                <tr>
+                    <td class="col-xs-10" colspan="3" style="border-bottom:1px solid #fff;" v-html="activity.content"></td>
+                    <td class="col-xs-2" rowspan="2">教学资源</td>
+                </tr>
+                <tr>
+                    <td class="col-xs-10" colspan="3"><img v-for="img in activity.figures" :src="img? img.figure : ''" alt="" style="width:100%;"></td>
+                </tr>
+                <tr>
+                    <td class="col-xs-2">延伸活动</td>
+                    <td class="col-xs-10" colspan="3">${activity.extension_activity}</td>
+                </tr>
+                <tr>
+                    <td class="col-xs-2">学习评量</td>
+                    <td class="col-xs-10" colspan="3">${activity.assessment}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+  </div>  
+</div>

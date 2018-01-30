@@ -30,11 +30,17 @@
 			'typeahead': 'typeahead',
 			'bloodhound': 'bloodhound',
 			'vue': 'https://cdn.bootcss.com/vue/2.5.13/vue',
-			'moment': 'https://cdn.bootcss.com/moment.js/2.20.1/moment'
+			'moment': 'https://cdn.bootcss.com/moment.js/2.20.1/moment',
+			'bootstrap-select': 'https://cdn.bootcss.com/bootstrap-select/1.12.4/js/bootstrap-select',
+			'activitiesTemplate': 'template/activities.html',
+			'booksTemplate': 'template/books.html'
 		},
 		shim: {
 			'bootstrap' :{
 				deps: ['$', 'moment']
+			},
+			'bootstrap-select' :{
+				deps: ['$']
 			},
 			'typeahead' :{
 				deps: ['$']

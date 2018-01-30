@@ -1,0 +1,31 @@
+<div>
+    共有${booklistcomplete.length}条记录
+  <div class="row" >
+        <div class="panel panel-default">
+            <!-- Default panel contents -->
+            <div class="panel-heading">Books</div>
+            <!-- Table -->
+            <table class="table table-hover table-bordered">
+                <thead>
+                    <tr>
+                        <th class="col-xs-4"></th>
+                        <th class="col-xs-4"></th>
+                        <th class="col-xs-2"></th>
+                        <th class="col-xs-2"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(book, index) in booklistcomplete" :key="index">
+                        <td>${book.bookname}</td>
+                        <td><img :src="book.bookcover" alt="" style="width:100%;"></td>
+                   
+                        <td>${book.totalcount}</td>
+                        <td>
+                            <button  type="button" class="btn btn-info"  @click="updateBookById(book)">更新</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>  
+</div>

@@ -1,15 +1,17 @@
-require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calendar', 'bootstrap-datepicker',
-        'underscore', 'typeahead'
+require(['vue', 'bloodhound', 'text!activitiesTemplate','text!booksTemplate','$', 'bootstrap', 'popover', 'bootstrap-year-calendar', 'bootstrap-datepicker',
+        'underscore', 'typeahead','bootstrap-select'
     ],
-    function(Vue, Bloodhound) {
-
-        // var getChildrenTextContent = function (children) {
+    function(Vue, Bloodhound, activitiesTpl, booksTpl) {
+       
+        // var getChildrenTextC ontent = function (children) {
         //   return children.map(function (node) {
         //     return node.children
         //       ? getChildrenTextContent(node.children)
         //       : node.text
         //   }).join('')
         // }
+
+        // console.log(booksTpl)
         $(document).off('.alert.data-api');
 
         Vue.component('alert', {
@@ -78,6 +80,44 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                 '</div>'
             ].join('')
         })
+         // console.log(_.template(activitiesTpl)())
+
+
+
+        Vue.component('activitiestpl', {
+            delimiters: ['${', '}'],
+            template : _.template(activitiesTpl)(),
+            props: {
+                activitylistcomplete: {
+                    type: Array,
+                    required: true,
+                    default: function(){
+                        return []
+                    }
+                }
+            },
+            methods: {
+                cemitter: function (activity){
+                    this.$emit('chandler', activity)
+                }
+            }
+        
+        })
+
+        Vue.component('bookstpl', {
+            delimiters: ['${', '}'],
+            template : _.template(booksTpl)(),
+            props: {
+                booklistcomplete: {
+                    type: Array,
+                    required: true,
+                    default: function(){
+                        return []
+                    }
+                }
+            }
+        
+        })
 
         var app = new Vue({
             el: '#library-app',
@@ -125,7 +165,8 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                     _.each(_.keys(self.raw_booklist[0]), function(key){
                         obj[key] = ''
                     })
-                    console.log(obj)
+                    obj['seriesArray'] = [];
+                    // console.log(obj)
                     return obj;
                 },
                 tabs:function(){
@@ -181,19 +222,36 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                 self.getBookList();
                 self.getTargetList();
                 self.bindTypeahead();
+                self.switchTab(location.hash.replace('#', ''));
+
+
+            },
+            updated: function(){
+                var self = this;
+                $('.selectpicker').selectpicker('refresh');
             },
             methods: {
+                getUrlParam : function (name,path) {
+                    if(!path){
+                        path = location.search;
+                    }
+                    var re = new RegExp("(\\?|&)" + name + "=([^&]+)(&|$)", "i"), m = path.match(re);
+                    return m ? decodeURIComponent(m[2]) : "";
+                },
                 switchTab: function(tab){
                     var self = this;
-                    console.log(tab)
+                    // console.log(tab)
+                    if(!tab) {
+                        tab = 'all';
+                    }
                     _.each(self.activeTab, function(tab, index){
                         self.activeTab[index] = false;
                     })
                     Vue.set(self.activeTab, tab, true);
                 },
-                saveNewActivity: function(newactivity){
+                saveOrUpdateActivity: function(newactivity){
                     var self = this;
-                    console.log(newactivity)
+                    // console.log(newactivity)
                     self.loading.in();
 
 
@@ -219,6 +277,7 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                     
                 },
                 getTargetList: function(){
+
                     var self = this;
                     self.loading.in();
                     $.ajax({
@@ -228,7 +287,7 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                         dataType: 'json',
                         context: 'application/json;charset=utf-8',
                         success: function(data) {
-                            console.log(data)
+                            // console.log(data)
                             // var majors = _.groupBy(data, 'major_name');
                             // var tmp = [];
                             // _.each(majors, function(major){
@@ -249,6 +308,7 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                     });
                 },
                 postUpdateActivityAction: function(formData){
+
                     var self = this;
                     $.ajax({
                             url: "http://readingkid.us-east-2.elasticbeanstalk.com/api/updateActivityAction",
@@ -261,6 +321,7 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                             // context: 'application/json;charset=utf-8',
                             success: function(data) {
                                 self.loading.out();
+                                $('#figures1').val('');
                                 if (data.code == 1) {
                                     self.alert = {
                                         type: 'success',
@@ -286,6 +347,7 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                         });
                 },
                 postSaveNewActivityAction: function(formData){
+
                     var self = this;
                     $.ajax({
                             url: "http://readingkid.us-east-2.elasticbeanstalk.com/api/saveNewActivityAction",
@@ -298,6 +360,7 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                             // context: 'application/json;charset=utf-8',
                             success: function(data) {
                                 self.loading.out();
+                                $('#figures1').val('');
                                 if (data.code == 1) {
                                     self.alert = {
                                         type: 'success',
@@ -350,8 +413,9 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
 
                 },
                 savechanges: function(){
+
                     var self = this;
-                    console.log(self.newbook)
+                    // console.log(self.newbook)
                     self.loading.in();
                     $.ajax({
                         url: "http://readingkid.us-east-2.elasticbeanstalk.com/api/saveNewBookAction",
@@ -444,22 +508,21 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                             //     }
                             // }
                         });
-
                     $('#searchWords_book_lidou').bind('typeahead:select', function(ev, suggestion) {
-                        console.log(suggestion)
-                        console.log(self.newactivity)
+                        // console.log(suggestion)
+                        // console.log(self.newactivity)
                         Vue.set(self.newactivity, 'book_lidou', suggestion.id);
                     })
                     $('#searchWords').bind('typeahead:render', function(ev) {
                         var args = [];
                         Array.prototype.push.apply(args, arguments);
-                        console.log(args)
+                        // console.log(args)
                         var rest = _.rest(args);//去掉第一个参数ev
                         if(!_.isEmpty(rest)) {
                             if(_.has(rest[0], 'extension_activity')) {
                                 self.activitylistComplete = rest;
-                                console.log('====')
-                                console.log(self.activitylistComplete)
+                                // console.log('====')
+                                // console.log(self.activitylistComplete)
                             }
                             if(_.has(rest[0], 'bookname')) {
                                 self.booklistComplete = rest;
@@ -580,7 +643,7 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                         dataType: 'json',
                         context: 'application/json;charset=utf-8',
                         success: function(data) {
-                            console.log(data)
+                            // console.log(data)
                             self.activityFigures = data;
                             self.getActivityList();
 
@@ -596,6 +659,8 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                     });
                 },
                 getActivityList: function() {
+                            
+
                     var self = this;
                     self.loading.in();
                     $.ajax({
@@ -607,21 +672,24 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                         success: function(data) {
                             self.loading.out();
 
-                            console.log(data)
-                            console.log(_.findlastIndex)
+                            // console.log(data)
+                            // console.log(_.findlastIndex)
                             var data_fulltext = [];
                             var activityFigures = self.activityFigures;
+                            
                             _.each(data, function(item, index){
                                 var fulltext = '';
                                 _.each(item, function(i, k){
+                                    if(k == 'title' || k == 'book_lidou_name') {
                                      fulltext += i;
+                                    }
                                 })
                                 var index = '';
                                 var figures = [];
                                 while((index = _.findIndex(activityFigures, {
                                     activity_id: item['id']
                                 })) != '-1') {
-                                    console.log(index)
+                                    // console.log(index)
                                     // console.log(activityFigures.splice(index, 1))
                                     figures.push(activityFigures.splice(index, 1));
                                 }
@@ -631,14 +699,21 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                                     figures: _.flatten(figures)
                                 }))
                             })
+                            
                             self.activitylist = data_fulltext;
                             self.activitylistComplete = data_fulltext;
                             self.raw_activitylist = data_fulltext;
                         
-                            console.log(data_fulltext)
+                            // console.log(data_fulltext)
                             self.engineActivity.clear(); //清空一下初始数据
                             self.engineActivity.local = data_fulltext; //设置一下local
+                            console.log('=== a ====')
+                            console.time('a')
                             self.engineActivity.initialize(true); //初始化
+                            console.timeEnd('a')
+                           
+                            
+
 
                         },
                         error: function(data) {
@@ -658,9 +733,10 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                     }
                 },
                 postPunch: function(index) {
+
                     var self = this;
                     var bookname = self.recentlyBooks[index];
-                    console.log(bookname)
+                    // console.log(bookname)
                     for (var i = 0; i < 1; i++) {
                         if (!self.keyword && !bookname) {
                             self.alert = {
@@ -686,7 +762,7 @@ require(['vue', 'bloodhound', '$', 'bootstrap', 'popover', 'bootstrap-year-calen
                             },
                             context: 'application/json;charset=utf-8',
                             success: function(data) {
-                                console.log(data)
+                                // console.log(data)
                                 self.loading.out();
                                 if (data.success) {
                                     self.keyword = '';

@@ -1,8 +1,8 @@
 {% include 'header.twig' %}
 <div id="library-app">
-	<ul class="nav nav-tabs" >
-	  <li role="presentation" :class="activeTab[tab] ? 'active' : ''" v-for="tab in tabs" @click="switchTab(tab)"><a href="#">${tab}</a></li>
-	</ul>
+    <ul class="nav nav-tabs">
+        <li role="presentation" :class="activeTab[tab] ? 'active' : ''" v-for="tab in tabs" @click="switchTab(tab)"><a :href="'#'+tab">${tab}</a></li>
+    </ul>
     <div class="row">
         <div class="col-lg-12">
             <div class="input-group">
@@ -17,189 +17,134 @@
     </div>
     <loading v-if="changer"></loading>
     <alert v-if="a.message" :type="a.type" :close="a.close" @close="closeAlert">${a.message}<span slot="foo">&times;</span></alert>
-
-	<!-- 活动 START -->
-	<button type="button" data-toggle="modal" @click="addActivity">add activity</button>
-	<!-- activities 展示 START -->
-	<template v-if="activeTab.all || activeTab.activities">
-	<div class="row" v-for="activity in activitylistComplete">
-        <div class="panel panel-default">
-            <!-- Default panel contents -->
-            <div class="panel-heading" style="position: relative;">
-            	${activity.book_lidou_name}
-            	<button  type="button" class="btn btn-info" style="position:absolute;right:2%;    top: 50%;transform: translateY(-50%);" @click="updateActivityById(activity)">更新</button>
-            </div>
-            <!-- Table -->
-            <table class="table table-hover table-bordered">
-                <thead>
-                    <tr>
-                       <!--  <th class="col-xs-4"></th>
-                        <th class="col-xs-6"></th>
-                        <th class="col-xs-2"></th> -->
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="col-xs-2">活动名称 ${activity.id}</td>
-                        <td class="col-xs-4">${activity.title}</td>
-                        <td class="col-xs-2">教学时间</td>
-                        <td class="col-xs-4">${activity.duration}</td>
-                    </tr>
-                    <tr>
-                        <td class="col-xs-2">学习发展指南</td>
-                        <td class="col-xs-10" colspan="3">${activity.major_name}  ${activity.sub_name}</td>
-                    </tr>
-                    <tr>
-                        <td class="col-xs-2">学习目标</td>
-                        <td class="col-xs-10" colspan="3">${activity.target_name}</td>
-                    </tr>
-                    <tr>
-                        <td class="col-xs-10"  colspan="3">教学活动</td>
-                        <td class="col-xs-2">教学资源</td>
-                    </tr>
-                    <tr>
-                        <td class="col-xs-10"  colspan="3">${activity.content}</td>
-                        <td class="col-xs-2">
-                        	<img v-for="img in activity.figures" :src="img? img.figure : ''" alt="" style="width:100%;">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-xs-2">延伸活动</td>
-                        <td class="col-xs-10" colspan="3">${activity.extension_activity}</td>
-                    </tr>
-                    <tr>
-                        <td class="col-xs-2">学习评量</td>
-                        <td class="col-xs-10" colspan="3">${activity.assessment}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-	<!-- activities 展示 END -->
-    <div id="bookModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="gridSystemModalLabel">Modal title</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-4">bookname  <input type="text" v-model="newbook.bookname"></div>
-                        <div class="col-md-4">author  <input type="text" v-model="newbook.author"></div>
-                        <div class="col-md-4">language  <input type="text" v-model="newbook.language"></div>
+    <!-- 活动 START -->
+    <!-- activities 展示 START -->
+    <template v-if="activeTab.all || activeTab.activities">
+        <button type="button" data-toggle="modal" @click="addActivity">add activity</button>
+        <activitiestpl :activitylistcomplete="activitylistComplete" @chandler="updateActivityById"></activitiestpl>
+        <!-- activities 展示 END -->
+        <div id="activityModal" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="gridSystemModalLabel">Modal title</h4>
                     </div>
-                    <div class="row">
-                        <div class="col-md-4">price  <input type="text" v-model="newbook.price"></div>
-                        <div class="col-md-4">series  <input type="text" v-model="newbook.series"></div>
-                        <div class="col-md-4">purchaseDate  <input type="text" v-model="newbook.purchaseDate"></div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">publicationDate  <input type="text" v-model="newbook.publicationDate"></div>
-                        <div class="col-md-4">publisher  <input type="text" v-model="newbook.publisher"></div>
-                        <div class="col-md-4">users  <input type="text" v-model="newbook.users"></div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" @click="savechanges">Save changes</button>
-                </div>
-            </div>
-            <!-- /.modal-content -->
-        </div>
-        <!-- /.modal-dialog -->
-    </div>
-    
-    <div id="activityModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="gridSystemModalLabel">Modal title</h4>
-                </div>
-
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-4">title  <input type="text" v-model="newactivity.title"></div>
-                        <div class="col-md-4">place  <input type="text" v-model="newactivity.place"></div>
-                        <div class="col-md-4">type  <input type="text" v-model="newactivity.type"></div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">subtype  <input type="text" v-model="newactivity.subtype"></div>
-                        <div class="col-md-4">content  <input type="text" v-model="newactivity.content"></div>
-                        <div class="col-md-4">duration  <input type="text" v-model="newactivity.duration"></div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4"> target 
-						<select name="" id="" v-model="newactivity.target">
-							<option :value="target.area_target_id" v-for="(target,k1) in targetList">
-							${target.target_name} - ${target.sub_name} - ${target.major_name}
-							</option>
-						</select>
-                        <div class="col-md-4"> book_lidou 
-
-						<input type="text" id="searchWords_book_lidou" name="searchWords_book_lidou" class="form-control" placeholder="请输入要搜索关键词" v-model="newactivity.book_lidou">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-4">title
+                                <input type="text" v-model="newactivity.title">
+                            </div>
+                            <div class="col-md-4">place
+                                <input type="text" v-model="newactivity.place">
+                            </div>
+                            <div class="col-md-4">duration
+                                <input type="text" v-model="newactivity.duration">
+                            </div>
                         </div>
-                        <div class="col-md-4"> extension_activity <input type="text" v-model="newactivity.extension_activity"></div>
+                        <div class="row">
+                            <div class="col-md-4">content
+                                <textarea v-model="newactivity.content" style="width:100%;"></textarea>
+                            </div>
+                            <div class="col-md-4"> target
+                                <select name="" id="" v-model="newactivity.target">
+                                    <option :value="target.area_target_id" v-for="(target,k1) in targetList">
+                                        ${target.target_name} - ${target.sub_name} - ${target.major_name}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-4"> book_lidou
+                                <input type="text" id="searchWords_book_lidou" name="searchWords_book_lidou" class="form-control" placeholder="请输入要搜索关键词" v-model="newactivity.book_lidou">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4"> extension_activity
+                                <textarea v-model="newactivity.extension_activity" style="width:100%;"></textarea>
+                            </div>
+                            <div class="col-md-4"> assessment
+                                <textarea v-model="newactivity.assessment" style="width:100%;"></textarea>
+                            </div>
+                            <div class="col-md-4">figures1
+                                <input id="figures1" type="file" value="" name="figures1">
+                            </div>
+                        </div>
                     </div>
-                    <div class="row">
-                    	<div class="col-md-4"> assessment <input type="text" v-model="newactivity.assessment"></div>
-                        <div class="col-md-4">figures1  
-                            <input id="figures1" type="file" value="" name="figures1" >
-                        </div>
-                        <div class="col-md-4">figures2  
-                            <input id="figures2" type="file" value="" name="figures2" >
-                        </div>
-                        
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" @click="saveOrUpdateActivity(newactivity)">Save changes</button>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" @click="saveNewActivity(newactivity)">Save changes</button>
-                </div>
+                <!-- /.modal-content -->
             </div>
-            <!-- /.modal-content -->
+            <!-- /.modal-dialog -->
         </div>
-        <!-- /.modal-dialog -->
-    </div>
-    <!-- /.row -->
-	</template>
-	<!-- 活动END -->
-
-
-	<!-- BOOKS START -->
-	<template v-if="activeTab.all || activeTab.books">
-    <button type="button" data-toggle="modal" data-target="#bookModal">add book</button>
-    <textarea type="text" v-model="keyword"></textarea>
-    <input id="photo" type="file" style="width:200px" value="" name="photo">
-    <!-- <img :src="sku.photo"> -->
-    <button class="ui button orange " @click="uploadimg">上传图片</button>
-    <div class="row" >
-        <div class="panel panel-default">
-            <!-- Default panel contents -->
-            <div class="panel-heading">Books</div>
-            <!-- Table -->
-            <table class="table table-hover table-bordered">
-                <thead>
-                    <tr>
-                        <th class="col-xs-4"></th>
-                        <th class="col-xs-6"></th>
-                        <th class="col-xs-2"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="(book, index) in booklistComplete">
-                        <td>${book.bookname}</td>
-                        <td><img :src="book.bookcover" alt="" style="width:100%;"></td>
-                        <td>${book.totalcount}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+        <!-- /.row -->
     </template>
-	<!-- BOOKS END -->
-
+    <!-- 活动END -->
+    <!-- BOOKS START -->
+    <template v-if="activeTab.all || activeTab.books">
+        <button type="button" data-toggle="modal" data-target="#bookModal">add book</button>
+        <textarea type="text" v-model="keyword"></textarea>
+        <input id="photo" type="file" style="width:200px" value="" name="photo">
+        <!-- <img :src="sku.photo"> -->
+        <button class="ui button orange " @click="uploadimg">上传图片</button>
+        <bookstpl :booklistcomplete="booklistComplete"></bookstpl>
+        <div id="bookModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="gridSystemModalLabel">Modal title</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-4">bookname
+                                <input type="text" v-model="newbook.bookname">
+                            </div>
+                            <div class="col-md-4">author
+                                <input type="text" v-model="newbook.author">
+                            </div>
+                            <div class="col-md-4">language
+                                <input type="text" v-model="newbook.language">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">price
+                                <input type="text" v-model="newbook.price">
+                            </div>
+                            <div class="col-md-4">series
+                                <!-- <select class="selectpicker" multiple v-model="newbook.seriesArray">
+						  <option >Mustard</option>
+						  <option>Ketchup</option>
+						  <option>Relish</option>
+						</select> -->
+                                <div class="col-md-4">purchaseDate
+                                    <input type="text" v-model="newbook.purchaseDate">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">publicationDate
+                                    <input type="text" v-model="newbook.publicationDate">
+                                </div>
+                                <div class="col-md-4">publisher
+                                    <input type="text" v-model="newbook.publisher">
+                                </div>
+                                <div class="col-md-4">users
+                                    <input type="text" v-model="newbook.users">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" @click="savechanges">Save changes</button>
+                        </div>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+    </template>
+    <!-- BOOKS END -->
     {% include 'footer.twig' %}
     <script src="assets/js/controller/library.js"></script>
     </body>

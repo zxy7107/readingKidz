@@ -680,7 +680,7 @@ require(['vue', 'bloodhound', 'text!activitiesTemplate','text!booksTemplate','$'
                             _.each(data, function(item, index){
                                 var fulltext = '';
                                 _.each(item, function(i, k){
-                                    if(k == 'title' || k == 'book_lidou_name') {
+                                    if(k == 'title' || k == 'book_lidou_name' || k =='content') {
                                      fulltext += i;
                                     }
                                 })

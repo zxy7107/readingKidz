@@ -17,6 +17,9 @@ Follow the steps below to deploy the demo application to an Elastic Beanstalk PH
 readingKidz 
 http://readingkid.us-east-2.elasticbeanstalk.com/
 
+v1.1.5
+1. fix issue: 按下载状态搜索
+
 v1.1.4
 1.导入youku活动记录
 2.更新或新增活动后清空input file

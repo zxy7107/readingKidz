@@ -485,34 +485,7 @@ require(['vue', 'bloodhound', 'text!activitiesTemplate','text!booksTemplate','$'
                                 }
                             }
                         });
-                    $('#searchWords_book_lidou').typeahead({
-                            hint: false,
-                            highlight: true,
-                            minLength: 0, //最小长度为0的时候就启用搜索
-                            classNames: {
-                                input: 'form-control',
-                                menu: 'cust-menu'
-                                // hint: 'Typeahead-hint',
-                                // selectable: 'Typeahead-selectable'
-                            }
-                        },
-                        {
-                            name: 'books',
-                            display: 'bookname',
-                            source: self.nflTeamsWithDefaults,
-                            limit: 1000,
-                            // templates: {
-                            //     // header: '<h3>books</h3>',
-                            //     suggestion: function() {
-                            //         return '<span></span>'
-                            //     }
-                            // }
-                        });
-                    $('#searchWords_book_lidou').bind('typeahead:select', function(ev, suggestion) {
-                        // console.log(suggestion)
-                        // console.log(self.newactivity)
-                        Vue.set(self.newactivity, 'book_lidou', suggestion.id);
-                    })
+                    
                     $('#searchWords').bind('typeahead:render', function(ev) {
                         var args = [];
                         Array.prototype.push.apply(args, arguments);
@@ -601,6 +574,36 @@ require(['vue', 'bloodhound', 'text!activitiesTemplate','text!booksTemplate','$'
                         dataType: 'json',
                         context: 'application/json;charset=utf-8',
                         success: function(data) {
+
+                            $('#searchWords_book_lidou').typeahead({
+                                    hint: false,
+                                    highlight: true,
+                                    minLength: 0, //最小长度为0的时候就启用搜索
+                                    classNames: {
+                                        input: 'form-control',
+                                        menu: 'cust-menu'
+                                        // hint: 'Typeahead-hint',
+                                        // selectable: 'Typeahead-selectable'
+                                    }
+                                },
+                                {
+                                    name: 'books',
+                                    display: 'bookname',
+                                    source: self.nflTeamsWithDefaults,
+                                    limit: 1000,
+                                    // templates: {
+                                    //     // header: '<h3>books</h3>',
+                                    //     suggestion: function() {
+                                    //         return '<span></span>'
+                                    //     }
+                                    // }
+                                });
+                            $('#searchWords_book_lidou').bind('typeahead:select', function(ev, suggestion) {
+                                // console.log(suggestion)
+                                // console.log(self.newactivity)
+                                Vue.set(self.newactivity, 'book_lidou', suggestion.id);
+                            })
+                            
                             self.booklistComplete = data;
                             self.raw_booklist = data;
                             var tmp = [];
@@ -659,7 +662,7 @@ require(['vue', 'bloodhound', 'text!activitiesTemplate','text!booksTemplate','$'
                     });
                 },
                 getActivityList: function() {
-                            
+                    
 
                     var self = this;
                     self.loading.in();

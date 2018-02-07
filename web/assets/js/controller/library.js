@@ -2,7 +2,6 @@ require(['vue', 'bloodhound', 'text!activitiesTemplate','text!booksTemplate','$'
         'underscore', 'typeahead','bootstrap-select'
     ],
     function(Vue, Bloodhound, activitiesTpl, booksTpl) {
-       
         // var getChildrenTextC ontent = function (children) {
         //   return children.map(function (node) {
         //     return node.children
@@ -119,6 +118,7 @@ require(['vue', 'bloodhound', 'text!activitiesTemplate','text!booksTemplate','$'
         
         })
 
+
         var app = new Vue({
             el: '#library-app',
             delimiters: ['${', '}'],
@@ -218,7 +218,9 @@ require(['vue', 'bloodhound', 'text!activitiesTemplate','text!booksTemplate','$'
             },
             mounted: function() {
                 var self = this;
-                self.getActivityFiguresList();
+                self.getActivityFiguresList().done(function(){
+                    self.getActivityList();
+                });
                 self.getBookList();
                 self.getTargetList();
                 self.bindTypeahead();
@@ -270,9 +272,17 @@ require(['vue', 'bloodhound', 'text!activitiesTemplate','text!booksTemplate','$'
                     formData.append("figure", $('#figures1')[0].files[0]);
                     if(newactivity.id) {
                         formData.append("id", newactivity.id);
-                        self.postUpdateActivityAction(formData);
+                        self.postUpdateActivityAction(formData).done(function(activityId){
+                            self.getActivityFiguresListById(activityId).done(function(){
+                                self.getActivityListById(activityId);
+                            });
+                        });
                     } else {
-                        self.postSaveNewActivityAction(formData);
+                        self.postSaveNewActivityAction(formData).done(function(activityId){
+                            self.getActivityFiguresListById(activityId).done(function(){
+                                self.getActivityListById(activityId);
+                            });
+                        });
                     }
                     
                 },
@@ -310,6 +320,7 @@ require(['vue', 'bloodhound', 'text!activitiesTemplate','text!booksTemplate','$'
                 postUpdateActivityAction: function(formData){
 
                     var self = this;
+                    var deferred = $.Deferred();
                     $.ajax({
                             url: "http://readingkid.us-east-2.elasticbeanstalk.com/api/updateActivityAction",
                             // url: "http://127.0.0.1:8099/api/updateActivityAction",
@@ -327,13 +338,14 @@ require(['vue', 'bloodhound', 'text!activitiesTemplate','text!booksTemplate','$'
                                         type: 'success',
                                         message: data.resMessage + JSON.stringify(data.result)
                                     }
-                                    self.getActivityFiguresList();
+                                    deferred.resolve(data.result.id);
                                     $('#activityModal').modal('hide');
                                 } else {
                                     self.alert = {
                                         close: true,
                                         message: data.resMessage
                                     }
+                                    deferred.reject();
                                 }
                             },
                             error: function(data) {
@@ -343,12 +355,15 @@ require(['vue', 'bloodhound', 'text!activitiesTemplate','text!booksTemplate','$'
                                     type: 'danger',
                                     message: JSON.stringify(data)
                                 }
+                                deferred.reject();
                             }
                         });
+                    return deferred.promise();
                 },
                 postSaveNewActivityAction: function(formData){
 
                     var self = this;
+                    var deferred = $.Deferred();
                     $.ajax({
                             url: "http://readingkid.us-east-2.elasticbeanstalk.com/api/saveNewActivityAction",
                             // url: "http://127.0.0.1:8099/api/saveNewActivityAction",
@@ -366,13 +381,15 @@ require(['vue', 'bloodhound', 'text!activitiesTemplate','text!booksTemplate','$'
                                         type: 'success',
                                         message: data.resMessage + JSON.stringify(data.result)
                                     }
-                                    self.getActivityFiguresList();
+                                    alert(data.result.id)
+                                    deferred.resolve(data.result.id);
                                     $('#activityModal').modal('hide');
                                 } else {
                                     self.alert = {
                                         close: true,
                                         message: data.resMessage
                                     }
+                                    deferred.reject();
                                 }
                             },
                             error: function(data) {
@@ -382,8 +399,10 @@ require(['vue', 'bloodhound', 'text!activitiesTemplate','text!booksTemplate','$'
                                     type: 'danger',
                                     message: JSON.stringify(data)
                                 }
+                                deferred.reject();
                             }
                         });
+                    return deferred.promise();
                 },
                 addActivity: function(){
                     var self = this;
@@ -637,6 +656,7 @@ require(['vue', 'bloodhound', 'text!activitiesTemplate','text!booksTemplate','$'
                     });
                 },
                 getActivityFiguresList: function(process) {
+                    var deferred = $.Deferred();
                     var self = this;
                     self.loading.in();
                     $.ajax({
@@ -648,8 +668,8 @@ require(['vue', 'bloodhound', 'text!activitiesTemplate','text!booksTemplate','$'
                         success: function(data) {
                             // console.log(data)
                             self.activityFigures = data;
-                            self.getActivityList();
-
+                            // self.getActivityList();
+                            deferred.resolve();
                         },
                         error: function(data) {
                             self.alert = {
@@ -658,12 +678,43 @@ require(['vue', 'bloodhound', 'text!activitiesTemplate','text!booksTemplate','$'
                                 message: JSON.stringify(data)
                             }
                             self.loading.out();
+                            deferred.reject();
                         }
                     });
+                    return deferred.promise();
+                },
+                getActivityFiguresListById: function(activityId) {
+                    var deferred = $.Deferred();
+                    var self = this;
+                    self.loading.in();
+                    $.ajax({
+                        url: "http://readingkid.us-east-2.elasticbeanstalk.com/getActivityFiguresListById",
+                        // url: "http://127.0.0.1:8099/getActivityFiguresListById",
+                        method: 'post',
+                        dataType: 'json',
+                        data: {
+                            activityId: activityId
+                        },
+                        context: 'application/json;charset=utf-8',
+                        success: function(data) {
+                            // console.log(data)
+                            self.activityFigures = data;
+                            // self.getActivityList();
+                            deferred.resolve();
+                        },
+                        error: function(data) {
+                            self.alert = {
+                                close: true,
+                                type: 'danger',
+                                message: JSON.stringify(data)
+                            }
+                            self.loading.out();
+                            deferred.reject();
+                        }
+                    });
+                    return deferred.promise();
                 },
                 getActivityList: function() {
-                    
-
                     var self = this;
                     self.loading.in();
                     $.ajax({
@@ -714,10 +765,44 @@ require(['vue', 'bloodhound', 'text!activitiesTemplate','text!booksTemplate','$'
                             console.time('a')
                             self.engineActivity.initialize(true); //初始化
                             console.timeEnd('a')
-                           
-                            
 
+                        },
+                        error: function(data) {
+                            self.alert = {
+                                close: true,
+                                type: 'danger',
+                                message: JSON.stringify(data)
+                            }
+                            self.loading.out();
+                        }
+                    });
+                },
+                getActivityListById: function(activityId) {
+                    var self = this;
+                    self.loading.in();
+                    $.ajax({
+                        url: "http://readingkid.us-east-2.elasticbeanstalk.com/getActivityListById",
+                        // url: "http://127.0.0.1:8099/getActivityListById",
+                        method: 'post',
+                        dataType: 'json',
+                        data: {
+                                activityId: activityId
+                            },
+                        context: 'application/json;charset=utf-8',
+                        success: function(data) {
+                            self.loading.out();
 
+                            var figures = [];
+                                while((index = _.findIndex(self.activityFigures, {
+                                    activity_id: activityId
+                                })) != '-1') {
+                                    figures.push(self.activityFigures.splice(index, 1));
+                                }
+
+                            self.activitylistComplete = [_.extend(data[0], {
+                                    figures: _.flatten(figures)
+                                })];
+                            console.log(self.activitylistComplete)
                         },
                         error: function(data) {
                             self.alert = {

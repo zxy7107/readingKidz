@@ -17,6 +17,9 @@ Follow the steps below to deploy the demo application to an Elastic Beanstalk PH
 readingKidz 
 http://readingkid.us-east-2.elasticbeanstalk.com/
 
+v1.1.6 
+1.fix issue: book_lidou选择
+
 v1.1.5
 1. fix issue: 按下载状态搜索
 

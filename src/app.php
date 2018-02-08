@@ -232,6 +232,65 @@ $app->match('/punch', function (Request $request) use ($app) {
     
 });
 
+$app->match('/punchActivity', function (Request $request) use ($app) {
+    // If the form was submitted, process the input
+    if ('POST' == $request->getMethod()) {
+        try {
+            // Make sure the photo was uploaded without error
+            $activityId = $request->request->get('activityId');
+            $count = $request->request->get('count');
+            $type = $request->request->get('type');
+            if(!isset($count)){
+              $count = 1;
+            }
+
+              $sql = "INSERT INTO {$app['db.table_punch']} (book_id, count, type) VALUES (:activityId, :count, :type)";
+              $query = $app['db']->prepare($sql);
+              $data = array(
+                  ':activityId' => $activityId,
+                  ':count' => $count,
+                  ':type' => $type
+              );
+              
+              if (!$query->execute($data)) {
+                  $res = array(
+                   'result'=> array(
+                   ),
+                   'code'=> '001',
+                   'resultMassage' => 'Saving your thought to the database failed.',
+                   'success' => false
+                  );
+                  return json_encode($res, JSON_UNESCAPED_SLASHES);  
+              }
+
+              $res = array(
+               'result'=> array(
+                  'book_id' => $activityId,
+                  'count' => $count,
+                  'type'=> $type
+               ),
+               'code'=> '001',
+               'resultMassage' => '打卡成功啦',
+               'success' => true
+              );
+              return json_encode($res, JSON_UNESCAPED_SLASHES);    
+   
+
+        } catch (Exception $e) {
+                $res = array(
+                 'result'=> array(
+                 ),
+                 'code'=> '001',
+                 'resultMassage' => '错误啦',
+                 'success' => false
+                );
+                return json_encode($res, JSON_UNESCAPED_SLASHES);  
+        }
+    }
+
+    
+});
+
 $list = array(
  '00001'=> array(
     'name' => 'Peter Jackson',

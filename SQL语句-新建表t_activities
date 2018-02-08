@@ -177,3 +177,7 @@ INSERT INTO `awsdatabase`.`t_book_series` (`name`) VALUES
 ("初级-生活常识系列"),
 ("安东尼绘本12册")
 ;
+
+
+ALTER TABLE `awsdatabase`.`t_punch_records` 
+ADD COLUMN `type` VARCHAR(45) NOT NULL AFTER `count`;

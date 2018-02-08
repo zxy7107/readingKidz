@@ -7,9 +7,7 @@
         <div class="col-lg-12">
             <div class="input-group">
                 <input type="text" id="searchWords" name="searchWords" class="form-control" placeholder="请输入要搜索关键词" v-model="keyword">
-                <span class="input-group-btn">
-			      <button id="refresh1" type="button" class="btn btn-default" @click="postPunch()">打卡</button>
-			      </span>
+                
             </div>
             <!-- /input-group -->
         </div>
@@ -21,7 +19,7 @@
     <!-- activities 展示 START -->
     <template v-if="activeTab.all || activeTab.activities">
         <button type="button" data-toggle="modal" @click="addActivity">add activity</button>
-        <activitiestpl :activitylistcomplete="activitylistComplete" @chandler="updateActivityById"></activitiestpl>
+        <activitiestpl :activitylistcomplete="activitylistComplete" @chandler="updateActivityById" @chandler2="postPunch" ></activitiestpl>
         <!-- activities 展示 END -->
         <div id="activityModal" class="modal fade" tabindex="-1" role="dialog">
             <div class="modal-dialog modal-lg" role="document">

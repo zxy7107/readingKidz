@@ -93,11 +93,15 @@ require(['vue', 'bloodhound', 'text!activitiesTemplate','text!booksTemplate','$'
                     default: function(){
                         return []
                     }
-                }
+                },
+
             },
             methods: {
                 cemitter: function (activity){
                     this.$emit('chandler', activity)
+                },
+                cemitter2: function (activity){
+                    this.$emit('chandler2', activity.id)
                 }
             }
         
@@ -316,6 +320,62 @@ require(['vue', 'bloodhound', 'text!activitiesTemplate','text!booksTemplate','$'
                             self.loading.out();
                         }
                     });
+                },
+                postPunch: function(index) {
+                    var self = this;
+                    var bookname = self.recentlyBooks[index];
+                    console.log(bookname)
+                    for (var i = 0; i < 1; i++) {
+                        if (!self.keyword && !bookname) {
+                            self.alert = {
+                                message: '请输入书名'
+                            }
+                            break;
+                        }
+                        if(!bookname && !self.keyword) {
+                            self.alert = {
+                                message: 'RecentlyBook 书名无效'
+                            }
+                            break;
+                        }
+                        self.loading.in();
+                        $.ajax({
+                            url: "http://readingkid.us-east-2.elasticbeanstalk.com/punchActivity",
+                            method: 'post',
+                            dataType: 'json',
+                            data: {
+                                searchWords: bookname? bookname : self.keyword,
+                                count: self.bookCounts[index]
+                            },
+                            context: 'application/json;charset=utf-8',
+                            success: function(data) {
+                                console.log(data)
+                                self.loading.out();
+                                if (data.success) {
+                                    self.keyword = '';
+                                    self.alert = {
+                                        type: 'success',
+                                        message: 'bookid: ' + data.result.book_id + '  bookname: ' + data.result.book_name+ '  count: ' + data.result.count
+                                    }
+                                    self.getRecentlyBooks();
+                                } else {
+                                    self.alert = {
+                                        close: true,
+                                        message: data.resultMassage
+                                    }
+                                }
+                            },
+                            error: function(data) {
+                                self.alert = {
+                                    close: true,
+                                    type: 'danger',
+                                    message: JSON.stringify(data)
+                                }
+                                self.loading.out();
+                            }
+                        });
+                    }
+
                 },
                 postUpdateActivityAction: function(formData){
 
@@ -820,33 +880,21 @@ require(['vue', 'bloodhound', 'text!activitiesTemplate','text!booksTemplate','$'
                         message: ''
                     }
                 },
-                postPunch: function(index) {
+                postPunch: function(activityId) {
 
                     var self = this;
-                    var bookname = self.recentlyBooks[index];
-                    // console.log(bookname)
                     for (var i = 0; i < 1; i++) {
-                        if (!self.keyword && !bookname) {
-                            self.alert = {
-                                message: '请输入书名'
-                            }
-                            break;
-                        }
-                        if (!bookname && !self.keyword) {
-                            self.alert = {
-                                message: 'RecentlyBook 书名无效'
-                            }
-                            break;
-                        }
+                       
                         self.loading.in();
                         $.ajax({
-                            url: "http://readingkid.us-east-2.elasticbeanstalk.com/punch",
+                            url: "http://readingkid.us-east-2.elasticbeanstalk.com/punchActivity",
                             // url: "http://127.0.0.1:8099/punch",
                             method: 'post',
                             dataType: 'json',
                             data: {
-                                searchWords: bookname ? bookname : self.keyword,
-                                count: self.bookCounts[index]
+                                activityId: activityId,
+                                count: 1,
+                                type: 2
                             },
                             context: 'application/json;charset=utf-8',
                             success: function(data) {
@@ -856,9 +904,8 @@ require(['vue', 'bloodhound', 'text!activitiesTemplate','text!booksTemplate','$'
                                     self.keyword = '';
                                     self.alert = {
                                         type: 'success',
-                                        message: 'bookid: ' + data.result.book_id + '  bookname: ' + data.result.book_name + '  count: ' + data.result.count
+                                        message: JSON.stringify(data)
                                     }
-                                    self.getBookList();
                                 } else {
                                     self.alert = {
                                         close: true,

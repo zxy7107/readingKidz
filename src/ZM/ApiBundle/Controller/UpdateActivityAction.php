@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use ZM\AdminBundle\Controller\DefaultController AS BaseController;
-
+use ZM\ApiBundle\Controller\BookController AS BookController;
 
 class UpdateActivityAction extends Controller {
  
@@ -74,32 +74,24 @@ class UpdateActivityAction extends Controller {
                             $result['resMessage'] = '保存new activity 成功！';
 
                             //判断是否有文件上传
-                            if (isset($_FILES['figure']) && $_FILES['figure'] != '') {
-                     
-                  
-                                    //设置图片保存路径
-                                    $path = 'image/bookcover/';
-                                    //获取上传文件后返回的文件名和扩展名
-                                    $u = new BaseController();
-                                    // $file_name = $u->uploadPic($title.$id, 'figure', $path);
-                                    $file_name = $u->uploadPic($id.time(), 'figure', $path);
-
+                            if (isset($_FILES['bookcover']) && $_FILES['bookcover'] != '') {
+                                    $c = new BookController();
+                                    $result =  $c->uploadImageCurl('activity');;
+                                    
                                     $sql2 = "INSERT INTO {$app['db.table_activity_figure']} (activity_id, figure) VALUES (:activity_id, :figure)";
-
 
                                     $query = $app['db']->prepare($sql2);
                                     $data = array(
-                                        ':figure' => $path.$file_name,
+                                        ':figure' => $result["image_url"],
                                         ':activity_id' => $id
                                     );
                                     if (!$query->execute($data)) {
                                         $result['flag'] = 9;
                                         $result['content'] = 'Saving your thought to the database failed.';
-                                
                                     }
 
-                                    $result['file_name'] = $file_name;
-                                    $result['result']['figure'] = $file_name;
+                                    $result['file_name'] = $result["file_name"];
+                                    $result['result']['figure'] = $result["file_name"];
                                     $result['result']['sql2'] = $sql2;
                                     $result['flag'] = 1;
                                     $result['resMessage'] = '保存new activity 成功！ 上传图片成功！';

@@ -17,6 +17,9 @@ Follow the steps below to deploy the demo application to an Elastic Beanstalk PH
 readingKidz 
 http://readingkid.us-east-2.elasticbeanstalk.com/
 
+imageserver-v1.0.5
+公共接口：上传图片
+
 v1.1.6 
 1.fix issue: book_lidou选择
 

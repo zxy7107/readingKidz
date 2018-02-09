@@ -93,7 +93,7 @@ require(['vue', 'bloodhound', 'text!activitiesTemplate','text!booksTemplate','$'
                     default: function(){
                         return []
                     }
-                },
+                }
 
             },
             methods: {
@@ -120,7 +120,21 @@ require(['vue', 'bloodhound', 'text!activitiesTemplate','text!booksTemplate','$'
                     default: function(){
                         return []
                     }
+                },
+                showbookimage2: {
+                    type: Boolean,
+                    required: false,
+                    default: false
                 }
+                
+            },
+            methods: {
+                cemitter: function(book){
+                    this.$emit('chandler', book);
+                },
+                cemitter2: function(){
+                    this.$emit('chandler2');
+                },
             }
         
         })
@@ -163,7 +177,8 @@ require(['vue', 'bloodhound', 'text!activitiesTemplate','text!booksTemplate','$'
                     extension_activity: '',
                     assessment: ''
                 },
-                targetList: []
+                targetList: [],
+                showBookImage: false
             },
             computed: {
                 newbook: function(){
@@ -276,7 +291,7 @@ require(['vue', 'bloodhound', 'text!activitiesTemplate','text!booksTemplate','$'
                     formData.append("book_lidou", newactivity.book_lidou);
                     formData.append("extension_activity", newactivity.extension_activity);
                     formData.append("assessment", newactivity.assessment);
-                    formData.append("figure", $('#figures1')[0].files[0]);
+                    formData.append("bookcover", $('#figures1')[0].files[0]);
                     if(newactivity.id) {
                         formData.append("id", newactivity.id);
                         self.postUpdateActivityAction(formData).done(function(activityId){
@@ -292,6 +307,9 @@ require(['vue', 'bloodhound', 'text!activitiesTemplate','text!booksTemplate','$'
                         });
                     }
                     
+                },
+                showBookImageHandler: function(){
+                    this.showBookImage = true;
                 },
                 getTargetList: function(){
 
@@ -629,7 +647,40 @@ require(['vue', 'bloodhound', 'text!activitiesTemplate','text!booksTemplate','$'
 
                     });
                 },
-           
+                uploadimg2: function(book) {
+                    var self = this;
+                    var formData = new FormData();
+                    console.log(book.bookname);
+                    formData.append("user_id", book.bookname);
+                    formData.append("bookcover", $('#photo')[0].files[0]);
+                    self.loading.in();
+                    $.ajax({
+                        method: "POST",
+                        url: "http://readingkid.us-east-2.elasticbeanstalk.com/api/uploadBookcoverAction",
+                        // url: "http://127.0.0.1:8099/api/uploadBookcoverAction",
+                        data: formData,
+                        processData: false,
+                        contentType: false
+                    }).always(function(res) {
+                        self.loading.out();
+                        $('#photo').val('');
+                        if (res.flag == 1) {
+                            self.alert = {
+                                type: 'success',
+                                message: res.content + '  ' + res.file_name
+                            }
+                            $('#photo').val('');
+                            self.getBookList();
+
+                        } else {
+                            self.alert = {
+                                close: true,
+                                type: 'danger',
+                                message: JSON.stringify(res)
+                            }
+                        }
+                    });
+                },
                 nflTeamsWithDefaults: function(q, sync) {
                     var self = this;
                     if (q === '') {

@@ -5,6 +5,7 @@
             <!-- Default panel contents -->
             <div class="panel-heading">Books</div>
             <!-- Table -->
+            <button type="button" class="btn btn-default" @click="cemitter2">显示图片</button>
             <table class="table table-hover table-bordered">
                 <thead>
                     <tr>
@@ -17,11 +18,11 @@
                 <tbody>
                     <tr v-for="(book, index) in booklistcomplete" :key="index">
                         <td>${book.bookname}</td>
-                        <td><img :src="book.bookcover" alt="" style="width:100%;"></td>
+                        <td><img v-if="book.bookcover && showbookimage2" :src="'http://tutorials-hpdnn-env.us-east-2.elasticbeanstalk.com/'+book.bookcover" alt="" style="width:100%;"></td>
                    
                         <td>${book.totalcount}</td>
                         <td>
-                            <button  type="button" class="btn btn-info"  @click="updateBookById(book)">更新</button>
+                            <button  type="button" class="btn btn-info"  @click="cemitter(book)">更新</button>
                         </td>
                     </tr>
                 </tbody>

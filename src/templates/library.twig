@@ -19,7 +19,7 @@
     <!-- activities 展示 START -->
     <template v-if="activeTab.all || activeTab.activities">
         <button type="button" data-toggle="modal" @click="addActivity">add activity</button>
-        <activitiestpl :activitylistcomplete="activitylistComplete" @chandler="updateActivityById" @chandler2="postPunch" @chandler3="showActivityImage"></activitiestpl>
+        <activitiestpl :activitylistcomplete="activitylistComplete" @chandler="updateActivityById" @chandler2="postPunch" @chandler3="showActivityImage" ></activitiestpl>
         <!-- activities 展示 END -->
         <div id="activityModal" class="modal fade" tabindex="-1" role="dialog">
             <div class="modal-dialog modal-lg" role="document">
@@ -86,7 +86,7 @@
         <input id="photo" type="file" style="width:200px" value="" name="photo">
         <!-- <img :src="sku.photo"> -->
         <button class="ui button orange " @click="uploadimg">上传图片</button>
-        <bookstpl :booklistcomplete="booklistComplete"></bookstpl>
+        <bookstpl :booklistcomplete="booklistComplete" @chandler="uploadimg2" :showbookimage2="showBookImage" @chandler2="showBookImageHandler"></bookstpl>
         <div id="bookModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">

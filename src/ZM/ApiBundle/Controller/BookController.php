@@ -16,8 +16,8 @@ class BookController extends BaseController {
 
             // Connecting to website.
             $ch = curl_init();
-            // curl_setopt($ch, CURLOPT_URL, 'http://tutorials-hpdnn-env.us-east-2.elasticbeanstalk.com/api/uploadImageAction');
-            curl_setopt($ch, CURLOPT_URL, 'http://127.0.0.1:8099/api/uploadImageAction');
+            curl_setopt($ch, CURLOPT_URL, 'http://tutorials-hpdnn-env.us-east-2.elasticbeanstalk.com/api/uploadImageAction');
+            // curl_setopt($ch, CURLOPT_URL, 'http://127.0.0.1:8099/api/uploadImageAction');
             $post = array(
                 'bookcover' => new \CurlFile($_FILES["bookcover"]["tmp_name"], $_FILES["bookcover"]["type"], $_FILES["bookcover"]["name"])
                 );
@@ -55,33 +55,43 @@ class BookController extends BaseController {
 
         try {
             $request = Request::createFromGlobals()->request;
-            $bookname = $request->get('user_id');
-            $folder = $request->get('folder');
-      
-            $query1 = $app['db']->prepare("SELECT id FROM {$app['db.table']} WHERE bookname='{$bookname}'");
-            // $book = $query1->execute() ? $query1->fetchAll(PDO::FETCH_ASSOC) : array();
-            $book = $query1->execute() ? $query1->fetchAll() : array();
-            if (isset($book[0]['id'])) {
 
-                $result = $this->uploadImageCurl($folder);
-         
-                $sql = "UPDATE {$app['db.table']} SET bookcover= (:bookcover) WHERE bookname= (:bookname)";
-                $query = $app['db']->prepare($sql);
-                $data = array(
-                    ':bookcover' => $result["image_url"],
-                    ':bookname' => $bookname
-                );
-                if (!$query->execute($data)) {
+            //判断是否有文件上传
+            if (isset($_FILES['bookcover']) && $_FILES['bookcover'] != '') {
+     
+                $bookname = $request->get('user_id');
+                $folder = $request->get('folder');
+          
+                $query1 = $app['db']->prepare("SELECT id FROM {$app['db.table']} WHERE bookname='{$bookname}'");
+                // $book = $query1->execute() ? $query1->fetchAll(PDO::FETCH_ASSOC) : array();
+                $book = $query1->execute() ? $query1->fetchAll() : array();
+                if (isset($book[0]['id'])) {
+
+                    $result = $this->uploadImageCurl($folder);
+             
+                    $sql = "UPDATE {$app['db.table']} SET bookcover= (:bookcover) WHERE bookname= (:bookname)";
+                    $query = $app['db']->prepare($sql);
+                    $data = array(
+                        ':bookcover' => $result["image_url"],
+                        ':bookname' => $bookname
+                    );
+                    if (!$query->execute($data)) {
+                        $result['flag'] = 9;
+                        $result['content'] = 'Saving your thought to the database failed.';
+                
+                    }
+
+                       
+                } else {
                     $result['flag'] = 9;
-                    $result['content'] = 'Saving your thought to the database failed.';
-            
+                    $result['content'] = '没有这个书名';
                 }
 
-                   
-            } else {
-                $result['flag'] = 9;
-                $result['content'] = '没有这个书名';
+            }else{
+                $result['flag'] = 2;
+                $result['content'] = '上传失败，没有选择图片！';
             }
+            
 
         } catch (Exception $e) {
                 $result['flag'] = 9;

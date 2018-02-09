@@ -39,7 +39,7 @@
                     <td class="col-xs-10" colspan="3" >
                         <button v-if="!activity.showimage && activity.figures.length>0" type="button" class="btn btn-default" @click="cemitter3(index)">显示图片</button>
                         <template v-if="activity.showimage">
-                            <img v-for="img in activity.figures" :src="img? img.figure : ''" alt="" style="width:100%;">    
+                            <img v-for="img in activity.figures" :src="img? 'http://tutorials-hpdnn-env.us-east-2.elasticbeanstalk.com/'+img.figure : ''" alt="" style="width:100%;">    
                         </template>
                     </td>
                 </tr>

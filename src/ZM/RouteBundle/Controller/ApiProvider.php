@@ -24,6 +24,13 @@ class ApiProvider implements ControllerProviderInterface
         //     return $app->redirect('/punchview');
         // });
 
+        $controllers->post('/uploadImageAction', function (Application $app) {
+            // return $app->redirect('/hello');
+
+                $c = new BookController();
+                return $c->uploadImageAction($app);
+        });
+
         $controllers->post('/uploadBookcoverAction', function (Application $app) {
             // return $app->redirect('/hello');
 

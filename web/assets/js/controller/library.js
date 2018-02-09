@@ -102,6 +102,9 @@ require(['vue', 'bloodhound', 'text!activitiesTemplate','text!booksTemplate','$'
                 },
                 cemitter2: function (activity){
                     this.$emit('chandler2', activity.id)
+                },
+                cemitter3: function (index){
+                    this.$emit('chandler3', index)
                 }
             }
         
@@ -376,6 +379,10 @@ require(['vue', 'bloodhound', 'text!activitiesTemplate','text!booksTemplate','$'
                         });
                     }
 
+                },
+                showActivityImage: function(index){
+                    this.activitylistComplete[index].showimage = true;
+                    console.log()
                 },
                 postUpdateActivityAction: function(formData){
 
@@ -810,7 +817,8 @@ require(['vue', 'bloodhound', 'text!activitiesTemplate','text!booksTemplate','$'
                                 
                                 data_fulltext.push(_.extend(item, {
                                     fulltext: fulltext,
-                                    figures: _.flatten(figures)
+                                    figures: _.flatten(figures),
+                                    showimage: false
                                 }))
                             })
                             
